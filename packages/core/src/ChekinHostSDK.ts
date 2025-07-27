@@ -2,7 +2,7 @@ import { ChekinSDKConfig, ChekinEventCallback } from './types';
 import { ChekinCommunicator } from './communication/ChekinCommunicator.js';
 import { formatChekinUrl } from './utils/formatChekinUrl.js';
 import { ChekinLogger, type ChekinLoggerConfig } from './utils/ChekinLogger.js';
-import { CHEKIN_ROOT_IFRAME_ID, CHEKIN_EVENTS } from './constants';
+import { CHEKIN_ROOT_IFRAME_ID, CHEKIN_EVENTS, CHEKIN_IFRAME_TITLE, CHEKIN_IFRAME_NAME } from './constants';
 
 export class ChekinSDK {
   private iframe: HTMLIFrameElement | null = null;
@@ -10,6 +10,7 @@ export class ChekinSDK {
   private config: ChekinSDKConfig;
   private observer: MutationObserver | null = null;
   private readonly logger: ChekinLogger;
+  private pendingPostMessageConfig?: Partial<ChekinSDKConfig>;
   
   constructor(config: ChekinSDKConfig & { logger?: ChekinLoggerConfig } = {} as any) {
     this.config = config;
@@ -68,18 +69,29 @@ export class ChekinSDK {
       }
 
       this.iframe = document.createElement('iframe');
-      this.iframe.src = formatChekinUrl(this.config);
+      
+      // Use new URL formatting to handle length limits
+      const urlResult = formatChekinUrl(this.config);
+      this.iframe.src = urlResult.url;
+      this.pendingPostMessageConfig = urlResult.postMessageConfig;
+      
+      if (urlResult.isLengthLimited) {
+        this.logger.warn('URL length exceeded safe limits, some config will be sent via postMessage', {
+          urlLength: urlResult.url.length,
+          hasPostMessageConfig: !!urlResult.postMessageConfig
+        });
+      }
+      
       this.iframe.style.cssText = `
         width: 100%; 
         border: none; 
         overflow: ${this.config.autoHeight ? 'hidden' : 'initial'};
       `;
-      this.iframe.title = 'Chekin SDK';
-      this.iframe.name = 'chekin-sdk-frame';
+      this.iframe.title = CHEKIN_IFRAME_TITLE;
+      this.iframe.name = CHEKIN_IFRAME_NAME;
       this.iframe.role = 'application';
       this.iframe.id = CHEKIN_ROOT_IFRAME_ID;
 
-      // Set iframe sandbox for security (similar to your commented sandbox)
       this.iframe.setAttribute('sandbox', 'allow-modals allow-forms allow-popups allow-scripts allow-same-origin');
       
       this.iframe.onload = () => {
@@ -87,6 +99,11 @@ export class ChekinSDK {
           this.logger.logIframeLoad(this.iframe.src);
           this.communicator = new ChekinCommunicator(this.iframe, this.config, this.logger);
           this.setupEventListeners();
+          
+          if (this.pendingPostMessageConfig) {
+            this.sendPostMessageConfig();
+          }
+          
           this.logger.logMount(container.id || 'unknown', this.config);
           resolve(this.iframe);
         }
@@ -113,6 +130,19 @@ export class ChekinSDK {
       childList: true,
       subtree: true,
     });
+  }
+
+  private sendPostMessageConfig(): void {
+    if (!this.communicator || !this.pendingPostMessageConfig) return;
+    
+    this.logger.debug('Sending additional config via postMessage', this.pendingPostMessageConfig);
+    
+    this.communicator.send({
+      type: CHEKIN_EVENTS.CONFIG_UPDATE,
+      payload: this.pendingPostMessageConfig
+    });
+    
+    this.pendingPostMessageConfig = undefined;
   }
 
   private setupEventListeners(): void {

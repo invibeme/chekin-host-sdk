@@ -9,7 +9,7 @@ export { formatChekinUrl } from './utils/formatChekinUrl.js';
 export { ChekinLogger } from './utils/ChekinLogger.js';
 
 // Constants
-export { CHEKIN_ROOT_IFRAME_ID, CHEKIN_EVENTS, LOG_LEVELS } from './constants/index.js';
+export { CHEKIN_ROOT_IFRAME_ID, CHEKIN_EVENTS, LOG_LEVELS, CHEKIN_IFRAME_TITLE, CHEKIN_IFRAME_NAME } from './constants/index.js';
 
 // Type definitions
 export type {
@@ -24,3 +24,7 @@ export type {
   ChekinLoggerConfig,
   LogLevel
 } from './utils/ChekinLogger.js';
+
+export type {
+  UrlConfigResult
+} from './utils/formatChekinUrl.js';

@@ -1,4 +1,6 @@
 export const CHEKIN_ROOT_IFRAME_ID = 'chekin-sdk-iframe';
+export const CHEKIN_IFRAME_TITLE = 'Chekin SDK';
+export const CHEKIN_IFRAME_NAME = 'chekin-sdk-frame';
 
 export const CHEKIN_EVENTS = {
   HEIGHT_CHANGED: 'height-changed',
