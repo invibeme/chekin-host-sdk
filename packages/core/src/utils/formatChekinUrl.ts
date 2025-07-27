@@ -1,6 +1,6 @@
-import { ChekinUrlConfig } from '../types/index.js';
+import { ChekinSDKConfig } from '../types/index.js';
 
-export function formatChekinUrl(config: ChekinUrlConfig): string {
+export function formatChekinUrl(config: ChekinSDKConfig): string {
   const version = config.version || 'latest';
   const baseUrl = config.baseUrl || `https://sdk.chekin.com/${version}/`;
   
@@ -15,6 +15,10 @@ export function formatChekinUrl(config: ChekinUrlConfig): string {
     url.searchParams.set("housingId", config.housingId);
   }
 
+  if (config.externalHousingId) {
+    url.searchParams.set("externalHousingId", config.externalHousingId);
+  }
+
   if (config.reservationId) {
     url.searchParams.set("reservationId", config.reservationId);
   }
@@ -27,11 +31,23 @@ export function formatChekinUrl(config: ChekinUrlConfig): string {
     url.searchParams.set("stylesLink", encodeURIComponent(config.stylesLink));
   }
 
-  if (config.customStyles) {
-    const stylesParam = Object.entries(config.customStyles)
+  if (config.styles) {
+    const stylesParam = Object.entries(config.styles)
       .map(([key, value]) => `${key}:${value}`)
       .join(';');
     url.searchParams.set("customStyles", encodeURIComponent(stylesParam));
+  }
+
+  if (config.hiddenFormFields) {
+    url.searchParams.set("hiddenFormFields", encodeURIComponent(JSON.stringify(config.hiddenFormFields)));
+  }
+
+  if (config.hiddenSections?.length) {
+    url.searchParams.set("hiddenSections", config.hiddenSections.join(","));
+  }
+
+  if (config.payServicesConfig) {
+    url.searchParams.set("payServicesConfig", encodeURIComponent(JSON.stringify(config.payServicesConfig)));
   }
 
   return url.toString();

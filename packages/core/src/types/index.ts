@@ -1,13 +1,33 @@
-export interface ChekinUrlConfig {
-  baseUrl?: string;
+export interface ChekinSDKConfig {
   apiKey: string;
-  version?: string;              // Optional version pinning
+  baseUrl?: string;
+  version?: string;
   features?: string[];
   housingId?: string;
+  externalHousingId?: string;
   reservationId?: string;
   defaultLanguage?: string;
-  customStyles?: Record<string, string>;
-  stylesLink?: string;           // External CSS
+  styles?: Record<string, string>;
+  stylesLink?: string;
+  autoHeight?: boolean;
+  hiddenFormFields?: {
+    housingInfo?: string[];
+    housingPolice?: string[];
+    housingStat?: string[];
+    guestbookGeneration?: string[];
+  };
+  hiddenSections?: string[];
+  payServicesConfig?: {
+    currency?: string;
+    liveness?: {
+      price?: number;
+    };
+  };
+  onHeightChanged?: (height: number) => void;
+  onError?: (error: { message: string; code?: string }) => void;
+  onConnectionError?: (error: any) => void;
+  onPoliceAccountConnection?: (data: any) => void;
+  onStatAccountConnection?: (data: any) => void;
 }
 
 export interface ChekinMessage {

@@ -1,11 +1,11 @@
-import { ChekinMessage, ChekinEventCallback, ChekinUrlConfig } from '../types';
+import { ChekinMessage, ChekinEventCallback, ChekinSDKConfig } from '../types';
 
 export class ChekinCommunicator {
   private iframe: HTMLIFrameElement;
   private eventListeners: Map<string, ChekinEventCallback[]> = new Map();
-  private config: ChekinUrlConfig;
+  private config: ChekinSDKConfig;
 
-  constructor(iframe: HTMLIFrameElement, config: ChekinUrlConfig) {
+  constructor(iframe: HTMLIFrameElement, config: ChekinSDKConfig) {
     this.iframe = iframe;
     this.config = config;
     window.addEventListener('message', this.handleMessage.bind(this));
