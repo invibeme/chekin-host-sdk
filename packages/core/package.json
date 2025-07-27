@@ -1,0 +1,39 @@
+{
+  "name": "@chekin/sdk",
+  "version": "1.0.0",
+  "description": "Framework-agnostic Chekin SDK for host management",
+  "type": "module",
+  "private": false,
+  "main": "./dist/index.js",
+  "module": "./dist/index.mjs",
+  "types": "./dist/index.d.ts",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.mjs",
+      "require": "./dist/index.js"
+    }
+  },
+  "files": [
+    "dist"
+  ],
+  "keywords": [
+    "chekin",
+    "sdk",
+    "host",
+    "management",
+    "iframe",
+    "typescript"
+  ],
+  "scripts": {
+    "build": "tsup",
+    "dev": "tsup --watch",
+    "prepublishOnly": "nx build core"
+  },
+  "dependencies": {
+    "tslib": "^2.3.0"
+  },
+  "devDependencies": {
+    "tsup": "^8.0.0"
+  }
+}

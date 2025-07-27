@@ -1,0 +1,62 @@
+{
+  "name": "chekin-host-sdk",
+  "version": "1.0.0",
+  "description": "Chekin Host SDK - Framework-agnostic monorepo for host management SDK",
+  "type": "module",
+  "private": true,
+  "workspaces": [
+    "packages/*",
+    "apps/*"
+  ],
+  "scripts": {
+    "build": "nx run-many --target=build --all",
+    "build:core": "nx build core",
+    "build:react": "nx build react",
+    "build:host-sdk": "nx build host-sdk",
+    "dev": "nx run-many --target=dev --all --parallel",
+    "test": "nx run-many --target=test --all",
+    "lint": "nx run-many --target=lint --all",
+    "typecheck": "nx run-many --target=typecheck --all",
+    "clean": "nx reset",
+    "publish:core": "nx publish core",
+    "publish:react": "nx publish react"
+  },
+  "devDependencies": {
+    "@eslint/js": "^9.8.0",
+    "@nx/eslint": "21.3.7",
+    "@nx/eslint-plugin": "21.3.7",
+    "@nx/js": "^21.3.7",
+    "@nx/react": "^21.3.7",
+    "@nx/vite": "^21.3.7",
+    "@nx/web": "21.3.7",
+    "@nx/workspace": "^21.3.7",
+    "@swc-node/register": "~1.9.1",
+    "@swc/core": "~1.5.7",
+    "@swc/helpers": "~0.5.11",
+    "@types/node": "^20.0.0",
+    "@types/react": "19.0.0",
+    "@types/react-dom": "19.0.0",
+    "@vitejs/plugin-react": "^4.2.0",
+    "@vitest/ui": "^3.0.0",
+    "eslint": "^9.8.0",
+    "eslint-config-prettier": "^10.0.0",
+    "jiti": "2.4.2",
+    "jsdom": "~22.1.0",
+    "jsonc-eslint-parser": "^2.1.0",
+    "nx": "^21.3.7",
+    "prettier": "^2.6.2",
+    "tslib": "^2.3.0",
+    "tsup": "^8.5.0",
+    "typescript": "^5.8.3",
+    "typescript-eslint": "^8.29.0",
+    "vite": "^6.3.5",
+    "vitest": "^3.0.0"
+  },
+  "nx": {
+    "includedScripts": []
+  },
+  "dependencies": {
+    "react": "19.0.0",
+    "react-dom": "19.0.0"
+  }
+}
