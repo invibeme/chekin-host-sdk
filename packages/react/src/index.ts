@@ -17,7 +17,7 @@ export type { ToastMessage, UseChekinToastReturn } from './hooks/useChekinToast.
 
 // Re-export core SDK types
 export type {
-  ChekinUrlConfig,
+  ChekinSDKConfig,
   ChekinMessage,
   ChekinEventType,
   ChekinEventCallback
