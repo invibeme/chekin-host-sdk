@@ -2,6 +2,7 @@ import { ChekinSDKConfig, ChekinEventCallback } from './types';
 import { ChekinCommunicator } from './communication/ChekinCommunicator.js';
 import { formatChekinUrl } from './utils/formatChekinUrl.js';
 import { ChekinLogger, type ChekinLoggerConfig } from './utils/ChekinLogger.js';
+import { ChekinSDKValidator, type ValidationResult } from './utils/validation.js';
 import { CHEKIN_ROOT_IFRAME_ID, CHEKIN_EVENTS, CHEKIN_IFRAME_TITLE, CHEKIN_IFRAME_NAME } from './constants';
 
 export class ChekinSDK {
@@ -11,21 +12,50 @@ export class ChekinSDK {
   private observer: MutationObserver | null = null;
   private readonly logger: ChekinLogger;
   private pendingPostMessageConfig?: Partial<ChekinSDKConfig>;
+  private readonly validator: ChekinSDKValidator;
   
   constructor(config: ChekinSDKConfig & { logger?: ChekinLoggerConfig } = {} as any) {
     this.config = config;
-    this.logger = new ChekinLogger(config.logger);
-    this.validateConfig();
-    this.logger.info('ChekinSDK instance created', { apiKey: config.apiKey ? '[REDACTED]' : 'missing' });
+    
+    const loggerConfig: ChekinLoggerConfig = {
+      enabled: !config.disableLogging,
+      ...config.logger
+    };
+    
+    this.logger = new ChekinLogger(loggerConfig);
+    this.validator = new ChekinSDKValidator();
+    
+    const validationResult = this.validateConfig();
+    this.logger.info('ChekinSDK instance created', { 
+      apiKey: config.apiKey ? '[REDACTED]' : 'missing',
+      loggingEnabled: !config.disableLogging,
+      validationErrors: validationResult.errors.length,
+      validationWarnings: validationResult.warnings.length
+    });
   }
   
-  private validateConfig(): void {
-    if (!this.config.apiKey) {
-      const error = new Error('apiKey is required');
-      this.logger.error('SDK validation failed: apiKey is required');
-      throw error;
+  private validateConfig(): ValidationResult {
+    const validationResult = this.validator.validateConfig(this.config);
+    
+    if (validationResult.errors.length > 0) {
+      validationResult.errors.forEach(error => {
+        this.logger.error(`Validation error in ${error.field}: ${error.message}`, { value: error.value });
+      });
+      
+      throw new Error(`SDK configuration validation failed: ${validationResult.errors.map(e => e.message).join(', ')}`);
     }
-    this.logger.debug('SDK configuration validated successfully');
+    
+    if (validationResult.warnings.length > 0) {
+      validationResult.warnings.forEach(warning => {
+        this.logger.warn(`Validation warning in ${warning.field}: ${warning.message}`, { value: warning.value });
+      });
+    }
+    
+    if (validationResult.isValid) {
+      this.logger.debug('SDK configuration validated successfully');
+    }
+    
+    return validationResult;
   }
   
   // Initialize SDK (similar to your original initialize method)
@@ -213,5 +243,14 @@ export class ChekinSDK {
 
   public async sendLogs(endpoint?: string): Promise<void> {
     await this.logger.sendLogs(endpoint);
+  }
+
+  public static validateConfig(config: ChekinSDKConfig): ValidationResult {
+    const validator = new ChekinSDKValidator();
+    return validator.validateConfig(config);
+  }
+
+  public getValidationResult(): ValidationResult {
+    return this.validator.validateConfig(this.config);
   }
 }

@@ -1,5 +1,11 @@
 import { ChekinSDKConfig } from '../types/index.js';
 
+const getBaseUrl = (version = 'latest') => {
+    const normalizedVersion = version === 'latest' ? version :
+        (version.startsWith('v') ? version : `v${version}`);
+    return `https://cdn.chekin.com/housings-sdk/${normalizedVersion}/`
+}
+
 const URL_LENGTH_LIMITS = {
   IE: 2083,
   SAFE_LIMIT: 2000,
@@ -14,7 +20,7 @@ export interface UrlConfigResult {
 
 export function formatChekinUrl(config: ChekinSDKConfig): UrlConfigResult {
   const version = config.version || 'latest';
-  const baseUrl = config.baseUrl || `https://sdk.chekin.com/${version}/`;
+  const baseUrl = config.baseUrl || getBaseUrl(version)
   
   const url = new URL(baseUrl);
   

@@ -32,7 +32,7 @@ export class ChekinLogger {
   constructor(config: ChekinLoggerConfig = {}) {
     this.config = {
       level: LOG_LEVELS.INFO,
-      prefix: '[ChekinSDK]',
+      prefix: '[Host SDK]',
       enabled: true,
       buffer: true,
       bufferSize: 100,

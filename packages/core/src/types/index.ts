@@ -10,6 +10,7 @@ export interface ChekinSDKConfig {
   styles?: Record<string, string>;
   stylesLink?: string;
   autoHeight?: boolean;
+  disableLogging?: boolean; // Disabled by default (logging enabled)
   hiddenFormFields?: {
     housingInfo?: string[];
     housingPolice?: string[];
