@@ -326,7 +326,7 @@ export class ChekinCommunicator {
   }
 
   public send(message: ChekinMessage) {
-    this.iframe.contentWindow?.postMessage(message, '*');
+    this.iframe.contentWindow?.postMessage(message, 'https://cdn.chekin.com');
   }
 }
 ```

@@ -231,10 +231,21 @@ export class ChekinSDK {
 
   public navigate(path: string): void {
     this.logger.info(`Navigating to path: ${path}`);
-    this.communicator?.send({
-      type: CHEKIN_EVENTS.NAVIGATE,
-      payload: { path }
-    });
+    this.communicator?.navigateToRoute(path);
+  }
+
+  public enableRouteSync(options: { hashPrefix?: string } = {}): void {
+    this.logger.info('Enabling route synchronization', options);
+    this.communicator?.enableRouteSync(options);
+  }
+
+  public disableRouteSync(): void {
+    this.logger.info('Disabling route synchronization');
+    this.communicator?.disableRouteSync();
+  }
+
+  public getCurrentRoute(): string {
+    return this.communicator?.getCurrentRoute() || '/';
   }
 
   public getLogger(): ChekinLogger {
