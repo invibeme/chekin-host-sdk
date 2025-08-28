@@ -20,8 +20,8 @@ chekin-host-sdk/
 │   │   │   └── types/                  # TypeScript definitions
 │   │   └── sandbox.html               # Development sandbox
 │   └── react/                   # @chekin/host-sdk-react (React components)
-│       ├── src/components/             # InlineWidget, PopupWidget, PopupButton
-│       └── src/hooks/                  # React hooks
+│       ├── src/components/             # ChekinHostSDKView
+│       └── src/hooks/                  # useHostSDKEventListener
 ├── docs/                        # API documentation
 ├── dist/                        # Build outputs
 └── nx.json                     # Nx workspace configuration
@@ -31,7 +31,7 @@ chekin-host-sdk/
 - **ChekinHostSDK**: Main vanilla JS/TS class with iframe management, validation, logging
 - **Communication Layer**: postMessage-based parent-iframe communication with event handling
 - **URL Management**: Smart URL formatting with length limits and postMessage fallback
-- **React Components**: InlineWidget, PopupWidget, PopupButton with hooks
+- **React Components**: ChekinHostSDKView with ref support and event handling hooks
 - **Security**: Proper iframe sandboxing with CSP compliance
 - **Logging & Validation**: Comprehensive error handling and configuration validation
 
@@ -80,14 +80,10 @@ Main SDK class providing:
 ## React Components
 
 ### Core Components (`packages/react/src/components/`)
-- **InlineWidget**: Direct iframe embedding component
-- **PopupWidget**: Modal overlay with iframe
-- **PopupButton**: One-click button to open popup
+- **ChekinHostSDKView**: Main React component with ref support for direct SDK access
 
 ### Hooks (`packages/react/src/hooks/`)
-- **useChekinModal**: Modal state management
-- **useChekinToast**: Toast notification system
-- **useChekinEventListener**: SDK event handling
+- **useHostSDKEventListener**: Event listener hook with automatic cleanup and type safety
 
 ## SDK Usage Patterns
 
@@ -107,9 +103,9 @@ await sdk.render('container-element');
 
 ### React Integration
 ```jsx
-import { InlineWidget } from '@chekin/host-sdk-react';
+import { ChekinHostSDKView } from '@chekin/host-sdk-react';
 
-<InlineWidget
+<ChekinHostSDKView
   apiKey="your-api-key"
   features={['reservations']}
   onHeightChanged={(height) => console.log(height)}

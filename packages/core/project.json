@@ -20,6 +20,27 @@
         "cwd": "{projectRoot}"
       }
     },
+    "test": {
+      "executor": "nx:run-commands",
+      "options": {
+        "command": "vitest run",
+        "cwd": "{projectRoot}"
+      }
+    },
+    "test:watch": {
+      "executor": "nx:run-commands",
+      "options": {
+        "command": "vitest --watch",
+        "cwd": "{projectRoot}"
+      }
+    },
+    "test:coverage": {
+      "executor": "nx:run-commands",
+      "options": {
+        "command": "vitest --coverage",
+        "cwd": "{projectRoot}"
+      }
+    },
     "publish": {
       "executor": "nx:run-commands",
       "dependsOn": ["build"],

@@ -28,9 +28,9 @@ npm install @chekin/host-sdk-react
 
 #### Vanilla JavaScript
 ```javascript
-import { ChekinSDK } from '@chekin/host-sdk';
+import { ChekinHostSDK } from '@chekin/host-sdk';
 
-const sdk = new ChekinSDK({
+const sdk = new ChekinHostSDK({
   apiKey: 'your-api-key',
   features: ['reservations', 'guests']
 });
@@ -42,11 +42,11 @@ sdk.render('chekin-container').then(() => {
 
 #### React
 ```jsx
-import { InlineWidget } from '@chekin/host-sdk-react';
+import { ChekinHostSDKView } from '@chekin/host-sdk-react';
 
 function MyComponent() {
   return (
-    <InlineWidget
+    <ChekinHostSDKView
       apiKey="your-api-key"
       features={['reservations', 'guests']}
       onHeightChanged={(height) => console.log(height)}
@@ -55,23 +55,30 @@ function MyComponent() {
 }
 ```
 
-#### React Modal
+#### React with Event Handling
 ```jsx
-import { PopupButton } from '@chekin/host-sdk-react';
+import { useHostSDKEventListener, ChekinHostSDKView } from '@chekin/host-sdk-react';
 
-<PopupButton
-  apiKey="your-api-key"
-  features={['reservations']}
->
-  Open Chekin SDK
-</PopupButton>
+function MyComponent() {
+  useHostSDKEventListener({
+    onHeightChanged: (height) => console.log('Height:', height),
+    onError: (error) => console.error('SDK Error:', error)
+  });
+
+  return (
+    <ChekinHostSDKView
+      apiKey="your-api-key"
+      features={['reservations']}
+    />
+  );
+}
 ```
 
 ## Package Structure
 
 This repository contains multiple packages:
 
-- **`@chekin/host-sdk`** - Core framework-agnostic SDK
+- **[`@chekin/host-sdk`](./packages/core/README.md)** - Core framework-agnostic SDK
 - **`@chekin/host-sdk-react`** - React components and hooks
 - **`apps/host-sdk`** - Iframe application (deployed to CDN)
 
@@ -82,8 +89,8 @@ This repository contains multiple packages:
 │   Your App      │    │   NPM Package    │    │  Iframe App     │
 │                 │    │                  │    │                 │
 │  ┌───────────┐  │    │  ┌────────────┐  │    │  ┌───────────┐  │
-│  │Integration│  │◄──►│  │ ChekinSDK  │  │◄──►│  │ Host UI   │  │
-│  │Component  │  │    │  │            │  │    │  │ (React)   │  │
+│  │Integration│  │◄──►│  │ChekinHost  │  │◄──►│  │ Host UI   │  │
+│  │Component  │  │    │  │    SDK     │  │    │  │ (React)   │  │
 │  └───────────┘  │    │  └────────────┘  │    │  └───────────┘  │
 │                 │    │        │         │    │                 │
 └─────────────────┘    │  ┌────────────┐  │    └─────────────────┘
@@ -92,7 +99,7 @@ This repository contains multiple packages:
                        │  └────────────┘  │            │
                        └──────────────────┘            │
                                                        │
-                          CDN: https://sdk.chekin.com/
+                          CDN: https://cdn.chekin.com/
 ```
 
 ## Configuration
@@ -113,11 +120,14 @@ This repository contains multiple packages:
 {
   version: '1.6.2',                // Pin to specific version
   baseUrl: 'https://custom.com/',  // Custom hosting URL
-  styles: {                  // Custom CSS styles
-    primaryColor: '#007cba',
-    fontFamily: 'Arial, sans-serif'
-  },
-  stylesLink: 'https://yoursite.com/custom.css'  // External stylesheet
+  styles: 'body { font-family: Arial, sans-serif; } .primary-color { color: #007cba; }',  // Custom CSS styles as string
+  stylesLink: 'https://yoursite.com/custom.css',  // External stylesheet
+  autoHeight: true,                // Auto-adjust iframe height
+  disableLogging: false,           // Enable SDK logging (default)
+  hiddenSections: ['payments'],    // Hide specific sections
+  hiddenFormFields: {              // Hide specific form fields
+    housingInfo: ['field1', 'field2']
+  }
 }
 ```
 
@@ -141,75 +151,61 @@ sdk.on('ready', () => {
 
 ## React Components
 
-### InlineWidget
-Embed the SDK directly in your React component:
+### ChekinHostSDKView
+The main React component that embeds the SDK directly in your application:
 
 ```jsx
-<InlineWidget
-  apiKey="your-api-key"
-  features={['reservations', 'guests']}
-  autoHeight={true}
-  onHeightChanged={(height) => console.log(height)}
-  onError={(error) => console.error(error)}
-  className="my-sdk-container"
-/>
-```
-
-### PopupWidget
-Display the SDK in a modal overlay:
-
-```jsx
-import { PopupWidget, useChekinModal } from '@chekin/host-sdk-react';
+import { useRef } from 'react';
+import { ChekinHostSDKView } from '@chekin/host-sdk-react';
+import type { ChekinHostSDKViewHandle } from '@chekin/host-sdk-react';
 
 function MyComponent() {
-  const { isOpen, open, close } = useChekinModal();
+  const sdkRef = useRef<ChekinHostSDKViewHandle>(null);
 
   return (
-    <>
-      <button onClick={open}>Open SDK</button>
-      <PopupWidget
-        isOpen={isOpen}
-        onClose={close}
-        apiKey="your-api-key"
-      />
-    </>
+    <ChekinHostSDKView
+      ref={sdkRef}
+      apiKey="your-api-key"
+      features={['reservations', 'guests']}
+      autoHeight={true}
+      onHeightChanged={(height) => console.log(height)}
+      onError={(error) => console.error(error)}
+      className="my-sdk-container"
+      style={{ minHeight: '400px' }}
+    />
   );
 }
 ```
 
-### PopupButton
-One-click button to open SDK in popup:
-
-```jsx
-<PopupButton
-  apiKey="your-api-key"
-  features={['reservations']}
-  onOpen={() => console.log('opened')}
-  onClose={() => console.log('closed')}
->
-  Manage Reservations
-</PopupButton>
-```
-
 ## React Hooks
 
-### useChekinModal
-```jsx
-const { isOpen, open, close, toggle } = useChekinModal();
-```
+### useHostSDKEventListener
+Listen to SDK events with automatic cleanup:
 
-### useChekinToast
 ```jsx
-const { toasts, showToast, removeToast, clearToasts } = useChekinToast();
+import { useHostSDKEventListener } from '@chekin/host-sdk-react';
 
-showToast('Success!', 'success', 5000);
-```
+function MyComponent() {
+  useHostSDKEventListener({
+    onHeightChanged: (height) => {
+      console.log('Height changed:', height);
+    },
+    onError: (error) => {
+      console.error('SDK Error:', error.message);
+    },
+    onConnectionError: (error) => {
+      console.error('Connection Error:', error);
+    },
+    onPoliceAccountConnection: (data) => {
+      console.log('Police account connected:', data);
+    },
+    onStatAccountConnection: (data) => {
+      console.log('Stat account connected:', data);
+    },
+  });
 
-### useChekinEventListener
-```jsx
-useChekinEventListener(sdk, 'height-changed', (height) => {
-  console.log('Height changed:', height);
-});
+  return <ChekinHostSDKView apiKey="your-api-key" />;
+}
 ```
 
 ## Security
@@ -220,12 +216,6 @@ Add to your CSP headers:
 frame-src https://sdk.chekin.com;
 connect-src https://api.chekin.com;
 ```
-
-### API Key Management
-- Use test keys (`pk_test_...`) for development
-- Store production keys securely
-- Never expose keys in client-side code
-- Rotate keys regularly
 
 ## Development
 
@@ -268,14 +258,6 @@ npm run test
 npm run lint
 npm run typecheck
 ```
-
-## Examples
-
-See the `examples/` directory for complete integration examples:
-
-- **`vanilla-js/`** - Pure JavaScript integration
-- **`react/`** - React component examples
-- **`typescript/`** - TypeScript integration with full type safety
 
 ## Documentation
 

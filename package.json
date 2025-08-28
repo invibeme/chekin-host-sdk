@@ -2,6 +2,9 @@
   "name": "chekin-host-sdk",
   "version": "1.0.0",
   "description": "Chekin Host SDK - Framework-agnostic monorepo for host management SDK",
+  "author": "vlad-svr",
+  "license": "MIT",
+  "repository": "invibeme/chekin-host-sdk",
   "type": "module",
   "private": true,
   "workspaces": [
