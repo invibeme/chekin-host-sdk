@@ -1,5 +1,5 @@
 import { useEffect, useRef } from 'react';
-import { ChekinHostSDK, ChekinEventCallback } from '@chekin/sdk';
+import { ChekinHostSDK, ChekinEventCallback } from '@chekin/host-sdk';
 
 export function useChekinEventListener(
   sdk: ChekinHostSDK | null,

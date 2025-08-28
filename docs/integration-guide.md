@@ -18,15 +18,15 @@ npm install @chekin/sdk-react
 
 #### Vanilla JavaScript
 ```javascript
-import { ChekinSDK } from '@chekin/sdk';
+import { ChekinHostSDK } from '@chekin/sdk';
 
-const sdk = new ChekinSDK({
+const sdk = new ChekinHostSDK({
   apiKey: 'your-api-key',
   features: ['reservations', 'guests']
 });
 
-sdk.render('chekin-container').then(() => {
-  console.log('SDK loaded successfully');
+sdk.render('chekin-container').then((iframe) => {
+  console.log('SDK loaded successfully', iframe);
 });
 ```
 
@@ -86,11 +86,7 @@ Customize the SDK appearance:
 
 ```javascript
 {
-  customStyles: {
-    primaryColor: '#007cba',
-    fontFamily: 'Arial, sans-serif',
-    borderRadius: '8px'
-  },
+  styles: 'body { font-family: Arial, sans-serif; } .primary-color { color: #007cba; }',
   stylesLink: 'https://yoursite.com/chekin-custom.css'
 }
 ```
@@ -101,8 +97,15 @@ Provide context for better user experience:
 ```javascript
 {
   housingId: 'housing-123',        // Pre-select housing
-  reservationId: 'res-456',       // Pre-load reservation
-  defaultLanguage: 'en'           // Set default language
+  externalHousingId: 'ext-456',    // External housing ID
+  reservationId: 'res-789',       // Pre-load reservation
+  defaultLanguage: 'en',          // Set default language
+  autoHeight: true,               // Auto-adjust iframe height
+  disableLogging: false,          // Enable SDK logging
+  hiddenSections: ['payments'],   // Hide specific sections
+  hiddenFormFields: {
+    housingInfo: ['field1', 'field2']
+  }
 }
 ```
 
@@ -116,7 +119,7 @@ Embed the SDK directly in your page:
 ```
 
 ```javascript
-const sdk = new ChekinSDK({
+const sdk = new ChekinHostSDK({
   apiKey: 'your-api-key'
 });
 
@@ -128,7 +131,7 @@ Show the SDK in a modal overlay:
 
 #### Vanilla JavaScript
 ```javascript
-const sdk = new ChekinSDK({
+const sdk = new ChekinHostSDK({
   apiKey: 'your-api-key'
 });
 
@@ -245,8 +248,8 @@ Load the SDK only when needed:
 
 ```javascript
 async function loadChekinSDK() {
-  const { ChekinSDK } = await import('@chekin/sdk');
-  return new ChekinSDK(config);
+  const { ChekinHostSDK } = await import('@chekin/sdk');
+  return new ChekinHostSDK(config);
 }
 
 // Load on user interaction
@@ -288,12 +291,12 @@ Adjust behavior for different screen sizes:
 ```javascript
 const isMobile = window.innerWidth < 768;
 
-const sdk = new ChekinSDK({
+const sdk = new ChekinHostSDK({
   apiKey: 'your-api-key',
-  customStyles: {
-    fontSize: isMobile ? '14px' : '16px',
-    padding: isMobile ? '10px' : '20px'
-  }
+  styles: `
+    body { font-size: ${isMobile ? '14px' : '16px'}; }
+    .container { padding: ${isMobile ? '10px' : '20px'}; }
+  `
 });
 ```
 
@@ -303,9 +306,9 @@ const sdk = new ChekinSDK({
 Use test API keys for development:
 
 ```javascript
-const sdk = new ChekinSDK({
+const sdk = new ChekinHostSDK({
   apiKey: 'pk_test_your_test_key',
-  baseUrl: 'https://sdk-sandbox.chekin.com/' // Test environment
+  baseUrl: 'https://cdn.chekin.com/housings-sdk/latest/' // Test environment
 });
 ```
 
@@ -313,7 +316,7 @@ const sdk = new ChekinSDK({
 Run the SDK locally during development:
 
 ```javascript
-const sdk = new ChekinSDK({
+const sdk = new ChekinHostSDK({
   apiKey: 'your-api-key',
   baseUrl: 'http://localhost:5173/' // Local development
 });
@@ -343,10 +346,14 @@ const sdk = new ChekinSDK({
 Enable verbose logging:
 
 ```javascript
-const sdk = new ChekinSDK({
+const sdk = new ChekinHostSDK({
   apiKey: 'your-api-key',
-  debug: true // Enable debug logging
+  disableLogging: false // Enable SDK logging (default)
 });
+
+// Access logger for advanced operations
+const logger = sdk.getLogger();
+logger.info('Custom log message');
 ```
 
 ### Browser Support
@@ -369,7 +376,7 @@ sdk.initialize(config);
 sdk.renderApp({ targetNode: element });
 
 // New
-const sdk = new ChekinSDK(config);
+const sdk = new ChekinHostSDK(config);
 sdk.render(element);
 ```
 
@@ -388,5 +395,5 @@ sdk.on('height-changed', callback);
 { apiKey, housingsId, features }
 
 // New
-{ apiKey, housingId, features }
+{ apiKey, housingId, externalHousingId, features }
 ```

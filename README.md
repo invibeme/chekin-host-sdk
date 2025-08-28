@@ -18,17 +18,17 @@ A modern, framework-agnostic SDK for integrating Chekin's host management platfo
 
 ```bash
 # For vanilla JavaScript/TypeScript
-npm install @chekin/sdk
+npm install @chekin/host-sdk
 
 # For React applications
-npm install @chekin/sdk-react
+npm install @chekin/host-sdk-react
 ```
 
 ### Basic Usage
 
 #### Vanilla JavaScript
 ```javascript
-import { ChekinSDK } from '@chekin/sdk';
+import { ChekinSDK } from '@chekin/host-sdk';
 
 const sdk = new ChekinSDK({
   apiKey: 'your-api-key',
@@ -42,7 +42,7 @@ sdk.render('chekin-container').then(() => {
 
 #### React
 ```jsx
-import { InlineWidget } from '@chekin/sdk-react';
+import { InlineWidget } from '@chekin/host-sdk-react';
 
 function MyComponent() {
   return (
@@ -57,7 +57,7 @@ function MyComponent() {
 
 #### React Modal
 ```jsx
-import { PopupButton } from '@chekin/sdk-react';
+import { PopupButton } from '@chekin/host-sdk-react';
 
 <PopupButton
   apiKey="your-api-key"
@@ -71,8 +71,8 @@ import { PopupButton } from '@chekin/sdk-react';
 
 This repository contains multiple packages:
 
-- **`@chekin/sdk`** - Core framework-agnostic SDK
-- **`@chekin/sdk-react`** - React components and hooks
+- **`@chekin/host-sdk`** - Core framework-agnostic SDK
+- **`@chekin/host-sdk-react`** - React components and hooks
 - **`apps/host-sdk`** - Iframe application (deployed to CDN)
 
 ## Architecture
@@ -159,7 +159,7 @@ Embed the SDK directly in your React component:
 Display the SDK in a modal overlay:
 
 ```jsx
-import { PopupWidget, useChekinModal } from '@chekin/sdk-react';
+import { PopupWidget, useChekinModal } from '@chekin/host-sdk-react';
 
 function MyComponent() {
   const { isOpen, open, close } = useChekinModal();

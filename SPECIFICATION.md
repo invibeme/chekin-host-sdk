@@ -156,7 +156,7 @@ Following industry standards and semantic clarity, we're adopting singular namin
 ```
 chekin-host-sdk/
 ├── packages/
-│   ├── core/                        # @chekin/sdk (framework-agnostic)
+│   ├── core/                        # @chekin/host-sdk (framework-agnostic)
 │   │   ├── src/
 │   │   │   ├── ChekinSDK.ts        # Main vanilla JS class
 │   │   │   ├── communication/       # postMessage handling
@@ -164,7 +164,7 @@ chekin-host-sdk/
 │   │   │   └── types/              # TypeScript definitions
 │   │   └── package.json
 │   │
-│   └── react/                       # @chekin/sdk-react (future)
+│   └── react/                       # @chekin/host-sdk-react (future)
 │       ├── src/
 │       │   ├── components/         # InlineWidget, PopupWidget
 │       │   ├── hooks/              # useChekinEventListener, etc.
@@ -289,7 +289,7 @@ const devSdk = new ChekinSDK({
 ```
 
 **SDK vs Iframe Versioning**
-- **SDK Package Version**: `@chekin/sdk@2.1.0` (independent semantic versioning)
+- **SDK Package Version**: `@chekin/host-sdk@2.1.0` (independent semantic versioning)
 - **Iframe App Version**: `v1.6.2` (deployed to CDN paths)
 - **Compatibility**: SDK includes compatibility matrix for supported iframe versions
 
@@ -400,7 +400,7 @@ export class ChekinSDK {
 
 ```javascript
 // Vanilla JavaScript
-import { ChekinSDK } from '@chekin/sdk';
+import { ChekinSDK } from '@chekin/host-sdk';
 
 const sdk = new ChekinSDK({
   apiKey: 'your-api-key',
@@ -425,7 +425,7 @@ sdk.destroy();
 <!-- HTML Integration -->
 <div id="chekin-widget"></div>
 <script type="module">
-  import { ChekinSDK } from 'https://unpkg.com/@chekin/sdk';
+  import { ChekinSDK } from 'https://unpkg.com/@chekin/host-sdk';
 
   const sdk = new ChekinSDK({
     apiKey: 'your-api-key'
@@ -741,7 +741,7 @@ export default defineConfig({
 ```json
 // packages/core/package.json
 {
-  "name": "@chekin/sdk",
+  "name": "@chekin/host-sdk",
   "version": "1.0.0",
   "description": "Framework-agnostic Chekin SDK",
   "main": "./dist/index.js",
@@ -766,7 +766,7 @@ export default defineConfig({
 ```json
 // packages/react/package.json
 {
-  "name": "@chekin/sdk-react", 
+  "name": "@chekin/host-sdk-react", 
   "version": "1.0.0",
   "description": "React components for Chekin SDK",
   "main": "./dist/index.js",
@@ -785,7 +785,7 @@ export default defineConfig({
     "react-dom": ">=16.8.0"
   },
   "dependencies": {
-    "@chekin/sdk": "workspace:^"
+    "@chekin/host-sdk": "workspace:^"
   }
 }
 ```

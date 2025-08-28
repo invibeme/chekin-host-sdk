@@ -15,8 +15,8 @@
     "skipDefaultLibCheck": true,
     "baseUrl": ".",
     "paths": {
-      "@chekin/sdk": ["packages/core/src/index.ts"],
-      "@chekin/sdk-react": ["packages/react/src/index.ts"]
+      "@chekin/host-sdk": ["packages/core/src/index.ts"],
+      "@chekin/host-sdk-react": ["packages/react/src/index.ts"]
     }
   },
   "exclude": ["node_modules", "tmp"]
