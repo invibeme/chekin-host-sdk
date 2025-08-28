@@ -82,7 +82,7 @@ interface ChekinUrlConfig {
   housingId?: string;            // Housing ID
   reservationId?: string;        // Reservation ID  
   defaultLanguage?: string;      // Default language (default: 'en')
-  customStyles?: Record<string, string>;  // Custom CSS styles
+  styles?: Record<string, string>;  // Custom CSS styles
   stylesLink?: string;           // External CSS stylesheet URL
 }
 ```

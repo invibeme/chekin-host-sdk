@@ -72,9 +72,8 @@ export class ChekinCommunicator {
 
   public send(message: ChekinMessage): void {
     console.log('SEND')
-    debugger
     if (this.iframe.contentWindow) {
-      this.iframe.contentWindow.postMessage(message, 'https://cdn.chekin.com');
+      this.iframe.contentWindow.postMessage(message, '*');
       this.logger.debug(`Message sent to iframe: ${message.type}`, message.payload, 'COMMUNICATION');
     } else {
       this.logger.warn('Cannot send message: iframe contentWindow is not available', { messageType: message.type }, 'COMMUNICATION');
@@ -176,12 +175,12 @@ export class ChekinCommunicator {
       payload: {
         timestamp: Date.now(),
         sdk: PACKAGE_INFO.name,
-        version: PACKAGE_INFO.version
+        version: PACKAGE_INFO.version,
+        origin: window.location.origin
       }
     };
     
     this.send(handshakePayload);
-    debugger
     this.logger.debug('Handshake sent to iframe', handshakePayload.payload, 'COMMUNICATION');
   }
 

@@ -182,7 +182,6 @@ export class ChekinHostSDK {
   }
 
   private updateIframeHeight(height: number): void {
-    debugger
     if (!this.iframe) return;
 
     this.iframe.style.height = `${height}px`;

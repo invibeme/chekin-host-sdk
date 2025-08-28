@@ -230,7 +230,7 @@ interface ChekinUrlConfig {
   housingId?: string;
   reservationId?: string;
   defaultLanguage?: string;
-  customStyles?: Record<string, string>;
+  styles?: Record<string, string>;
   stylesLink?: string;           // NEW: External CSS
 }
 
@@ -452,7 +452,7 @@ interface InlineWidgetProps {
   housingId?: string;
   reservationId?: string;
   defaultLanguage?: string;
-  customStyles?: Record<string, string>;
+  styles?: Record<string, string>;
   autoHeight?: boolean;
   onHeightChanged?: (height: number) => void;
   onError?: (error: Error) => void;

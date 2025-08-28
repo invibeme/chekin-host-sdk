@@ -113,7 +113,7 @@ This repository contains multiple packages:
 {
   version: '1.6.2',                // Pin to specific version
   baseUrl: 'https://custom.com/',  // Custom hosting URL
-  customStyles: {                  // Custom CSS styles
+  styles: {                  // Custom CSS styles
     primaryColor: '#007cba',
     fontFamily: 'Arial, sans-serif'
   },

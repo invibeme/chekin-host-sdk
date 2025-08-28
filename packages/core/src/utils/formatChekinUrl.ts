@@ -31,6 +31,7 @@ export function formatChekinUrl(config: ChekinSDKConfig): UrlConfigResult {
     externalHousingId: config.externalHousingId,
     reservationId: config.reservationId,
     lang: config.defaultLanguage,
+    autoHeight: config.autoHeight,
   };
 
 
@@ -58,13 +59,10 @@ export function formatChekinUrl(config: ChekinSDKConfig): UrlConfigResult {
   }
 
   if (config.styles) {
-    const stylesParam = Object.entries(config.styles)
-      .map(([key, value]) => `${key}:${value}`)
-      .join(';');
-    const encodedStyles = encodeURIComponent(stylesParam);
+    const encodedStyles = encodeURIComponent(config.styles);
     
     if (encodedStyles.length < 500) {
-      url.searchParams.set("customStyles", encodedStyles);
+      url.searchParams.set("styles", encodedStyles);
     } else {
       postMessageConfig = { ...postMessageConfig, styles: config.styles };
       isLengthLimited = true;

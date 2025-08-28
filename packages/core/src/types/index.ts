@@ -7,7 +7,7 @@ export interface ChekinSDKConfig {
   externalHousingId?: string;
   reservationId?: string;
   defaultLanguage?: string;
-  styles?: Record<string, string>;
+  styles?: string;
   stylesLink?: string;
   autoHeight?: boolean;
   disableLogging?: boolean; // Disabled by default (logging enabled)
