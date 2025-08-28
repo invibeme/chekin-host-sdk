@@ -5,8 +5,6 @@ export const CHEKIN_IFRAME_NAME = 'chekin-sdk-frame';
 export const CHEKIN_EVENTS = {
   HANDSHAKE: 'handshake',
   HEIGHT_CHANGED: 'height-changed',
-  MODAL_OPEN: 'modal-open',
-  TOAST_SHOW: 'toast-show',
   ERROR: 'error',
   CONNECTION_ERROR: 'connection-error',
   POLICE_ACCOUNT_CONNECTION: 'police-account-connection',

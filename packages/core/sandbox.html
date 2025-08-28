@@ -408,12 +408,6 @@ price: 333,
                             case CHEKIN_EVENTS.ROUTE_CHANGED:
                                 log(`Route changed to: ${data.route}`);
                                 break;
-                            case CHEKIN_EVENTS.MODAL_OPEN:
-                                log('Modal opened');
-                                break;
-                            case CHEKIN_EVENTS.TOAST_SHOW:
-                                log(`Toast: ${data.message}`);
-                                break;
                             case CHEKIN_EVENTS.ERROR:
                                 log(`Error: ${data.message}`, 'error');
                                 break;

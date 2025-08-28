@@ -1,3 +1,5 @@
+import { CHEKIN_EVENTS } from '../constants';
+
 export interface ChekinSDKConfig {
   apiKey: string;
   baseUrl?: string;
@@ -31,8 +33,6 @@ export interface ChekinSDKConfig {
   onStatAccountConnection?: (data: any) => void;
 }
 
-import { CHEKIN_EVENTS } from '../constants/index.js';
-
 export interface ChekinMessage {
   type: keyof typeof CHEKIN_EVENTS | string;
   payload: any;
@@ -40,8 +40,6 @@ export interface ChekinMessage {
 
 export interface ChekinEventType {
   [CHEKIN_EVENTS.HEIGHT_CHANGED]: number;
-  [CHEKIN_EVENTS.MODAL_OPEN]: { title?: string; content?: string };
-  [CHEKIN_EVENTS.TOAST_SHOW]: { message: string; type: 'success' | 'error' | 'info' };
   [CHEKIN_EVENTS.ERROR]: { message: string; code?: string };
   [CHEKIN_EVENTS.CONNECTION_ERROR]: any;
   [CHEKIN_EVENTS.POLICE_ACCOUNT_CONNECTION]: any;

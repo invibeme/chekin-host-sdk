@@ -114,7 +114,10 @@ export class ChekinHostSDK {
       
       this.iframe.style.cssText = `
         width: 100%; 
+        height: 100%;
+        min-height: 600px;
         border: none; 
+        transition: height 0.35s, opacity 0.4s 0.1s;
         overflow: ${this.config.autoHeight ? 'hidden' : 'initial'};
       `;
       this.iframe.title = CHEKIN_IFRAME_TITLE;

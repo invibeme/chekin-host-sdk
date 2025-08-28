@@ -1,14 +1,6 @@
 // React Components
+export { ChekinHostSDKView } from './components/ChekinHostSDKView';
+export type { ChekinHostSDKViewProps, ChekinHostSDKViewHandle } from './components/ChekinHostSDKView';
 
 // React Hooks
-export { useChekinEventListener } from './hooks/useChekinEventListener.js';
-
-// Export types
-
-// Re-export core SDK types
-export type {
-  ChekinSDKConfig,
-  ChekinMessage,
-  ChekinEventType,
-  ChekinEventCallback
-} from '@chekin/host-sdk';
+export { useHostSDKEventListener } from './hooks/useHostSDKEventListener';

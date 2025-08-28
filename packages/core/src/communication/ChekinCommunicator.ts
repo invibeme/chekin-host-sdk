@@ -1,6 +1,6 @@
 import { ChekinMessage, ChekinEventCallback, ChekinSDKConfig } from '../types/index.js';
 import { ChekinLogger } from '../utils/ChekinLogger.js';
-import { CHEKIN_EVENTS } from '../constants/index.js';
+import { CHEKIN_EVENTS } from '../constants';
 import { PACKAGE_INFO } from '../utils/packageInfo.js';
 
 export class ChekinCommunicator {
@@ -71,7 +71,6 @@ export class ChekinCommunicator {
   }
 
   public send(message: ChekinMessage): void {
-    console.log('SEND')
     if (this.iframe.contentWindow) {
       this.iframe.contentWindow.postMessage(message, '*');
       this.logger.debug(`Message sent to iframe: ${message.type}`, message.payload, 'COMMUNICATION');
