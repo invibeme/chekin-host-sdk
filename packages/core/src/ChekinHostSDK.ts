@@ -124,15 +124,12 @@ export class ChekinHostSDK {
 
       this.iframe.setAttribute('sandbox', 'allow-modals allow-forms allow-popups allow-scripts allow-same-origin');
 
-      console.log(this.iframe, 'fdfdsfd')
       this.iframe.onload = () => {
-        console.log('JAJAJAJJAJAJAJ')
         if (this.iframe) {
           this.logger.logIframeLoad(this.iframe.src);
           this.communicator = new ChekinCommunicator(this.iframe, this.config, this.logger);
           this.setupEventListeners();
 
-          console.log('LOADED')
           // Send handshake as soon as the iframe loads
           this.communicator.sendHandshake();
           

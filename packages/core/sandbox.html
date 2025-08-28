@@ -99,6 +99,12 @@
             border-radius: 8px;
             overflow: hidden;
             background: white;
+
+            & > iframe {
+                width: 100%;
+                height: 500px;
+                border: none;
+            }
         }
         .url-preview {
             background-color: #f0f8ff;
@@ -136,7 +142,27 @@
                 
                 <div class="form-group">
                     <label for="features">Features:</label>
-                    <input type="text" id="features" value="guests,reservations" placeholder="Comma-separated features">
+                    <input type="text" id="features" value="['IV', 'LIVENESS_DETECTION']" placeholder="Comma-separated features">
+                </div>
+
+                <div class="form-group">
+                    <label for="housing-id">Housing ID (optional):</label>
+                    <input type="text" id="housing-id" placeholder="Housing identifier">
+                </div>
+
+                <div class="form-group">
+                    <label for="reservation-id">Reservation ID (optional):</label>
+                    <input type="text" id="reservation-id" placeholder="Reservation identifier">
+                </div>
+
+                <div class="form-group">
+                    <label for="external-housing-id">External Housing ID (optional):</label>
+                    <input type="text" id="external-housing-id" placeholder="External housing identifier">
+                </div>
+
+                <div class="form-group">
+                    <label for="default-language">Default Language (optional):</label>
+                    <input type="text" id="default-language" placeholder="e.g., en, es, fr">
                 </div>
             </div>
             
@@ -150,10 +176,13 @@
                     <label for="custom-styles">Custom Styles (optional):</label>
                     <textarea id="custom-styles" placeholder="CSS styles as string"></textarea>
                 </div>
-                
+
                 <div class="form-group">
-                    <label for="hidden-sections">Hidden Sections (optional):</label>
-                    <input type="text" id="hidden-sections" placeholder="e.g., header,footer">
+                    <label for="auto-height">Auto Height:</label>
+                    <select id="auto-height">
+                        <option value="true" selected>True</option>
+                        <option value="false">False</option>
+                    </select>
                 </div>
                 
                 <div class="form-group">
@@ -164,6 +193,44 @@
                         <option value="warn">Warn</option>
                         <option value="error">Error</option>
                     </select>
+                </div>
+            </div>
+        </div>
+
+        <!-- Advanced Configuration Section -->
+        <div class="container">
+            <h3>Advanced Configuration</h3>
+            
+            <div class="config-section">
+                <div>
+                    <div class="form-group">
+                        <label for="hidden-form-fields">Hidden Form Fields (JSON):</label>
+                        <textarea id="hidden-form-fields" placeholder='{"housingInfo": ["field1"], "housingPolice": ["field2"], "housingStat": ["field"], "guestbookGeneration": ["field"]}'></textarea>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="pay-services-config">Pay Services Config (JSON):</label>
+                        <textarea id="pay-services-config" placeholder='{"currency": "USD", "liveness": {"price": 5}, "phoneValidation": {"price": 2}}'>{
+currency: 'usd',
+liveness: {
+price: 333,
+},
+}</textarea>
+                    </div>
+                    <div class="form-group">
+                        <label for="hidden-sections">Hidden Sections (optional):</label>
+                        <input type="text" id="hidden-sections" placeholder="housing_police,housing_stat,housing_documents,identity_verification">
+                    </div>
+                </div>
+
+                <div>
+                    <div class="form-group">
+                        <label for="enable-callbacks">Enable Event Callbacks:</label>
+                        <select id="enable-callbacks">
+                            <option value="true" selected>True</option>
+                            <option value="false">False</option>
+                        </select>
+                    </div>
                 </div>
             </div>
         </div>
@@ -258,7 +325,15 @@
                 const customStyles = document.getElementById('custom-styles').value;
                 const hiddenSections = document.getElementById('hidden-sections').value;
                 const logLevel = document.getElementById('log-level').value;
-                
+                const housingId = document.getElementById('housing-id').value;
+                const reservationId = document.getElementById('reservation-id').value;
+                const externalHousingId = document.getElementById('external-housing-id').value;
+                const defaultLanguage = document.getElementById('default-language').value;
+                const autoHeight = document.getElementById('auto-height').value === 'true';
+                const hiddenFormFields = document.getElementById('hidden-form-fields').value;
+                const payServicesConfig = document.getElementById('pay-services-config').value;
+                const enableCallbacks = document.getElementById('enable-callbacks').value === 'true';
+
                 if (!baseUrl || !apiKey) {
                     throw new Error('Base URL and API Key are required');
                 }
@@ -273,14 +348,52 @@
                 const config = {
                     apiKey,
                     baseUrl,
-                    autoHeight: true,
+                    autoHeight,
                     version: version || undefined,
                     features: features ? features.split(',').map(f => f.trim()) : [],
                     stylesLink: stylesLink || undefined,
                     styles: customStyles || undefined,
                     hiddenSections: hiddenSections ? hiddenSections.split(',').map(s => s.trim()) : [],
-                    logLevel
+                    logLevel,
+                    housingId: housingId || undefined,
+                    reservationId: reservationId || undefined,
+                    externalHousingId: externalHousingId || undefined,
+                    defaultLanguage: defaultLanguage || undefined,
                 };
+
+                // Parse and add complex JSON configs
+                if (hiddenFormFields) {
+                    try {
+                        config.hiddenFormFields = JSON.parse(hiddenFormFields);
+                    } catch (e) {
+                        try {
+                            config.hiddenFormFields = new Function('return ' + hiddenFormFields)();
+                        } catch (e2) {
+                            log(`Invalid format in hiddenFormFields: ${e2.message}`, 'warn');
+                        }
+                    }
+                }
+
+                if (payServicesConfig) {
+                    try {
+                        config.payServicesConfig = JSON.parse(payServicesConfig);
+                    } catch (e) {
+                        try {
+                            config.payServicesConfig = new Function('return ' + payServicesConfig)();
+                        } catch (e2) {
+                            log(`Invalid format in payServicesConfig: ${e2.message}`, 'warn');
+                        }
+                    }
+                }
+
+                // Add event callbacks if enabled
+                if (enableCallbacks) {
+                    config.onError = (error) => log(`Callback - Error: ${error}`, 'error');
+                    config.onHeightChanged = (height) => log(`Callback - Height changed: ${height}px`);
+                    config.onConnectionError = (error) => log(`Callback - Connection error: ${error}`, 'error');
+                    config.onPoliceAccountConnection = (data) => log(`Callback - Police account: ${JSON.stringify(data)}`);
+                    config.onStatAccountConnection = (data) => log(`Callback - Stat account: ${JSON.stringify(data)}`);
+                }
                 
                 // Initialize the actual SDK
                 sdk = new ChekinHostSDK(config);
