@@ -22,12 +22,6 @@ export interface ChekinLoggerConfig {
 export class ChekinLogger {
   private config: ChekinLoggerConfig;
   private logBuffer: LogEntry[] = [];
-  private readonly levelOrder = {
-    [LOG_LEVELS.DEBUG]: 0,
-    [LOG_LEVELS.INFO]: 1,
-    [LOG_LEVELS.WARN]: 2,
-    [LOG_LEVELS.ERROR]: 3,
-  };
 
   constructor(config: ChekinLoggerConfig = {}) {
     this.config = {
@@ -40,9 +34,8 @@ export class ChekinLogger {
     };
   }
 
-  private shouldLog(level: LogLevel): boolean {
-    if (!this.config.enabled) return false;
-    return this.levelOrder[level] >= this.levelOrder[this.config.level!];
+  private shouldLog(): boolean {
+    return !!this.config.enabled
   }
 
   private createLogEntry(level: LogLevel, message: string, data?: any, context?: string): LogEntry {
@@ -106,7 +99,7 @@ export class ChekinLogger {
   }
 
   log(level: LogLevel, message: string, data?: any, context?: string): void {
-    if (!this.shouldLog(level)) return;
+    if (!this.shouldLog()) return;
 
     const entry = this.createLogEntry(level, message, data, context);
     this.addToBuffer(entry);

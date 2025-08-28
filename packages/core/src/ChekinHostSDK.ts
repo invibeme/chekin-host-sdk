@@ -5,7 +5,7 @@ import { ChekinLogger, type ChekinLoggerConfig } from './utils/ChekinLogger.js';
 import { ChekinSDKValidator, type ValidationResult } from './utils/validation.js';
 import { CHEKIN_ROOT_IFRAME_ID, CHEKIN_EVENTS, CHEKIN_IFRAME_TITLE, CHEKIN_IFRAME_NAME } from './constants';
 
-export class ChekinSDK {
+export class ChekinHostSDK {
   private iframe: HTMLIFrameElement | null = null;
   private communicator: ChekinCommunicator | null = null;
   private config: ChekinSDKConfig;
@@ -123,12 +123,18 @@ export class ChekinSDK {
       this.iframe.id = CHEKIN_ROOT_IFRAME_ID;
 
       this.iframe.setAttribute('sandbox', 'allow-modals allow-forms allow-popups allow-scripts allow-same-origin');
-      
+
+      console.log(this.iframe, 'fdfdsfd')
       this.iframe.onload = () => {
+        console.log('JAJAJAJJAJAJAJ')
         if (this.iframe) {
           this.logger.logIframeLoad(this.iframe.src);
           this.communicator = new ChekinCommunicator(this.iframe, this.config, this.logger);
           this.setupEventListeners();
+
+          console.log('LOADED')
+          // Send handshake as soon as the iframe loads
+          this.communicator.sendHandshake();
           
           if (this.pendingPostMessageConfig) {
             this.sendPostMessageConfig();
@@ -175,13 +181,28 @@ export class ChekinSDK {
     this.pendingPostMessageConfig = undefined;
   }
 
+  private updateIframeHeight(height: number): void {
+    debugger
+    if (!this.iframe) return;
+
+    this.iframe.style.height = `${height}px`;
+    this.logger.debug(`Iframe height updated to ${height}px`);
+  }
+
   private setupEventListeners(): void {
     if (!this.communicator) return;
 
-    // Set up event callbacks from config
-    if (this.config.onHeightChanged) {
-      this.communicator.on(CHEKIN_EVENTS.HEIGHT_CHANGED, this.config.onHeightChanged);
-    }
+    // Set up dynamic height handling
+    this.communicator.on(CHEKIN_EVENTS.HEIGHT_CHANGED, (height: number) => {
+      this.updateIframeHeight(height);
+      
+      // Also call user's callback if provided
+      if (this.config.onHeightChanged) {
+        this.config.onHeightChanged(height);
+      }
+    });
+
+    // Set up other event callbacks from config
     if (this.config.onError) {
       this.communicator.on(CHEKIN_EVENTS.ERROR, this.config.onError);
     }

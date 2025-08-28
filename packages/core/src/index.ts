@@ -1,5 +1,5 @@
 // Main SDK export
-export { ChekinSDK } from './ChekinHostSDK';
+export { ChekinHostSDK } from './ChekinHostSDK';
 
 // Communication utilities
 export { ChekinCommunicator } from './communication/ChekinCommunicator.js';

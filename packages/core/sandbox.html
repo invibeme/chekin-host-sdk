@@ -121,12 +121,12 @@
             <div>
                 <div class="form-group">
                     <label for="base-url">Iframe Base URL:</label>
-                    <input type="text" id="base-url" value="http://localhost:4200" placeholder="e.g., https://cdn.chekin.com/housings-sdk/dev">
+                    <input type="text" id="base-url" value="http://localhost:5173" placeholder="e.g., https://cdn.chekin.com/housings-sdk/dev">
                 </div>
                 
                 <div class="form-group">
                     <label for="api-key">API Key:</label>
-                    <input type="text" id="api-key" value="demo-key" placeholder="Your API key">
+                    <input type="text" id="api-key" value="1082d95186767233dd02402093d8c0dfe32d549c1245da3abb0ea392c59d5139" placeholder="Your API key">
                 </div>
                 
                 <div class="form-group">
@@ -173,10 +173,10 @@
         </div>
         
         <div class="controls">
-            <button onclick="initializeSDK()">Initialize SDK</button>
-            <button onclick="destroySDK()" disabled id="destroy-btn">Destroy SDK</button>
-            <button onclick="testRouteNavigation()">Test Route Navigation</button>
-            <button onclick="clearLogs()">Clear Logs</button>
+            <button id="init-btn">Initialize SDK</button>
+            <button id="destroy-btn" disabled>Destroy SDK</button>
+            <button id="nav-btn">Test Route Navigation</button>
+            <button id="clear-btn">Clear Logs</button>
         </div>
         
         <div class="status" id="status">
@@ -199,8 +199,11 @@
     </div>
 
     <script type="module">
+        import { ChekinHostSDK, formatChekinUrl, ChekinLogger, CHEKIN_EVENTS } from './dist/index.js';
+        
         let sdk = null;
         let logContainer = document.getElementById('logs');
+        let logger = new ChekinLogger({ level: 'info' });
         
         function log(message, type = 'info') {
             const timestamp = new Date().toLocaleTimeString();
@@ -222,19 +225,19 @@
             const version = document.getElementById('version').value;
             const features = document.getElementById('features').value;
             
-            let url;
-            if (version) {
-                url = `${baseUrl}/${version}/`;
-            } else {
-                url = baseUrl.endsWith('/') ? baseUrl : baseUrl + '/';
+            try {
+                const config = {
+                    apiKey,
+                    baseUrl,
+                    version: version || undefined,
+                    features: features ? features.split(',').map(f => f.trim()) : [],
+                };
+                
+                const urlResult = formatChekinUrl(config);
+                document.getElementById('url-preview').textContent = urlResult.url;
+            } catch (error) {
+                document.getElementById('url-preview').textContent = `Error: ${error.message}`;
             }
-            
-            const params = new URLSearchParams();
-            if (apiKey) params.set('apiKey', apiKey);
-            if (features) params.set('features', features);
-            
-            const finalUrl = `${url}?${params.toString()}`;
-            document.getElementById('url-preview').textContent = finalUrl;
         }
         
         // Update URL preview when inputs change
@@ -245,7 +248,7 @@
         // Initialize URL preview
         updateUrlPreview();
         
-        window.initializeSDK = async function() {
+        async function initializeSDK() {
             try {
                 const baseUrl = document.getElementById('base-url').value;
                 const apiKey = document.getElementById('api-key').value;
@@ -263,106 +266,52 @@
                 log('Initializing Chekin SDK...');
                 updateStatus('Initializing SDK...');
                 
-                // Build iframe URL
-                let iframeUrl;
-                if (version) {
-                    iframeUrl = `${baseUrl}/${version}/`;
-                } else {
-                    iframeUrl = baseUrl.endsWith('/') ? baseUrl : baseUrl + '/';
-                }
+                // Update logger level
+                logger = new ChekinLogger({ level: logLevel });
                 
-                const params = new URLSearchParams();
-                params.set('apiKey', apiKey);
-                if (features) params.set('features', features);
-                if (stylesLink) params.set('stylesLink', stylesLink);
-                if (hiddenSections) params.set('hiddenSections', hiddenSections);
-                
-                iframeUrl += `?${params.toString()}`;
-                
-                // Create iframe
-                const container = document.getElementById('chekin-container');
-                container.innerHTML = '';
-                
-                const iframe = document.createElement('iframe');
-                iframe.src = iframeUrl;
-                iframe.style.cssText = 'width: 100%; height: 100%; border: none;';
-                iframe.sandbox = 'allow-modals allow-forms allow-popups allow-scripts allow-same-origin';
-                
-                container.appendChild(iframe);
-                
-                // Create SDK-like object for communication
-                sdk = {
-                    iframe: iframe,
-                    config: {
-                        apiKey,
-                        version,
-                        features: features ? features.split(',') : [],
-                        stylesLink,
-                        customStyles,
-                        hiddenSections: hiddenSections ? hiddenSections.split(',') : [],
-                        logLevel
-                    },
-                    
-                    send: function(message) {
-                        if (this.iframe.contentWindow) {
-                            this.iframe.contentWindow.postMessage(message, 'https://cdn.chekin.com');
-                            log(`Message sent: ${message.type}`, 'debug');
-                        }
-                    },
-                    
-                    on: function(type, callback) {
-                        log(`Event listener added for: ${type}`, 'debug');
-                    },
-                    
-                    navigateToRoute: function(route) {
-                        this.send({
-                            type: 'navigate',
-                            payload: { path: route }
-                        });
-                        log(`Navigation to: ${route}`);
-                    },
-                    
-                    destroy: function() {
-                        container.innerHTML = '<p style="text-align: center; margin-top: 50px; color: #666;">SDK destroyed</p>';
-                        log('SDK destroyed');
-                    }
+                // Create SDK configuration
+                const config = {
+                    apiKey,
+                    baseUrl,
+                    autoHeight: true,
+                    version: version || undefined,
+                    features: features ? features.split(',').map(f => f.trim()) : [],
+                    stylesLink: stylesLink || undefined,
+                    customStyles: customStyles || undefined,
+                    hiddenSections: hiddenSections ? hiddenSections.split(',').map(s => s.trim()) : [],
+                    logLevel
                 };
                 
-                // Listen for messages from iframe
-                window.addEventListener('message', function(event) {
-                    if (event.source !== iframe.contentWindow) return;
-                    
-                    log(`Message received: ${event.data.type} - ${JSON.stringify(event.data.payload)}`, 'debug');
-                    
-                    // Handle common message types
-                    switch (event.data.type) {
-                        case 'height-changed':
-                            log(`Height changed to: ${event.data.payload.height}px`);
-                            break;
-                        case 'route-changed':
-                            log(`Route changed to: ${event.data.payload.route}`);
-                            break;
-                        case 'modal-open':
-                            log('Modal opened');
-                            break;
-                        case 'toast-show':
-                            log(`Toast: ${event.data.payload.message}`);
-                            break;
-                        case 'error':
-                            log(`Error: ${event.data.payload.message}`, 'error');
-                            break;
-                    }
+                // Initialize the actual SDK
+                sdk = new ChekinHostSDK(config);
+                
+                // Set up event listeners for all SDK events
+                Object.values(CHEKIN_EVENTS).forEach(eventType => {
+                    sdk.on(eventType, (data) => {
+                        switch (eventType) {
+                            case CHEKIN_EVENTS.HEIGHT_CHANGED:
+                                log(`Height changed to: ${data.height}px`);
+                                break;
+                            case CHEKIN_EVENTS.ROUTE_CHANGED:
+                                log(`Route changed to: ${data.route}`);
+                                break;
+                            case CHEKIN_EVENTS.MODAL_OPEN:
+                                log('Modal opened');
+                                break;
+                            case CHEKIN_EVENTS.TOAST_SHOW:
+                                log(`Toast: ${data.message}`);
+                                break;
+                            case CHEKIN_EVENTS.ERROR:
+                                log(`Error: ${data.message}`, 'error');
+                                break;
+                            default:
+                                log(`Event ${eventType}: ${JSON.stringify(data)}`, 'debug');
+                        }
+                    });
                 });
                 
-                // Send custom styles if provided
-                if (customStyles) {
-                    setTimeout(() => {
-                        sdk.send({
-                            type: 'set-styles',
-                            payload: { styles: customStyles }
-                        });
-                    }, 1000);
-                }
+                // Render the SDK
+                await sdk.render('chekin-container');
                 
                 log(`SDK initialized successfully with base URL: ${baseUrl}`);
                 updateStatus('SDK initialized successfully');
@@ -375,16 +324,17 @@
             }
         };
         
-        window.destroySDK = function() {
+        function destroySDK() {
             if (sdk) {
                 sdk.destroy();
                 sdk = null;
                 document.getElementById('destroy-btn').disabled = true;
                 updateStatus('SDK destroyed');
+                log('SDK destroyed');
             }
         };
         
-        window.testRouteNavigation = function() {
+        function testRouteNavigation() {
             if (!sdk) {
                 log('SDK not initialized', 'warn');
                 return;
@@ -393,11 +343,18 @@
             const routes = ['/guests', '/reservations', '/settings', '/'];
             const randomRoute = routes[Math.floor(Math.random() * routes.length)];
             sdk.navigateToRoute(randomRoute);
+            log(`Navigation requested to: ${randomRoute}`);
         };
         
-        window.clearLogs = function() {
+        function clearLogs() {
             logContainer.textContent = 'Logs cleared...\n';
-        };
+        }
+        
+        // Set up event listeners for buttons
+        document.getElementById('init-btn').addEventListener('click', initializeSDK);
+        document.getElementById('destroy-btn').addEventListener('click', destroySDK);
+        document.getElementById('nav-btn').addEventListener('click', testRouteNavigation);
+        document.getElementById('clear-btn').addEventListener('click', clearLogs);
     </script>
 </body>
 </html>

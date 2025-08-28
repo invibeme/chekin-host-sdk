@@ -1,5 +1,7 @@
 import { ChekinMessage, ChekinEventCallback, ChekinSDKConfig } from '../types/index.js';
 import { ChekinLogger } from '../utils/ChekinLogger.js';
+import { CHEKIN_EVENTS } from '../constants/index.js';
+import { PACKAGE_INFO } from '../utils/packageInfo.js';
 
 export class ChekinCommunicator {
   private iframe: HTMLIFrameElement;
@@ -7,7 +9,7 @@ export class ChekinCommunicator {
   private config: ChekinSDKConfig;
   private logger: ChekinLogger;
   private currentRoute: string = '/';
-  private routeSyncEnabled: boolean = false;
+  private routeSyncEnabled: boolean = true;
   private hashPrefix: string = 'chekin';
 
   constructor(iframe: HTMLIFrameElement, config: ChekinSDKConfig, logger: ChekinLogger) {
@@ -69,6 +71,8 @@ export class ChekinCommunicator {
   }
 
   public send(message: ChekinMessage): void {
+    console.log('SEND')
+    debugger
     if (this.iframe.contentWindow) {
       this.iframe.contentWindow.postMessage(message, 'https://cdn.chekin.com');
       this.logger.debug(`Message sent to iframe: ${message.type}`, message.payload, 'COMMUNICATION');
@@ -164,6 +168,21 @@ export class ChekinCommunicator {
 
   public getCurrentRoute(): string {
     return this.currentRoute;
+  }
+
+  public sendHandshake(): void {
+    const handshakePayload = {
+      type: CHEKIN_EVENTS.HANDSHAKE,
+      payload: {
+        timestamp: Date.now(),
+        sdk: PACKAGE_INFO.name,
+        version: PACKAGE_INFO.version
+      }
+    };
+    
+    this.send(handshakePayload);
+    debugger
+    this.logger.debug('Handshake sent to iframe', handshakePayload.payload, 'COMMUNICATION');
   }
 
   public destroy(): void {
