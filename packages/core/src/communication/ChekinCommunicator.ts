@@ -112,9 +112,6 @@ export class ChekinCommunicator {
     // Listen for hash changes in parent window
     window.addEventListener('hashchange', this.handleParentHashChange.bind(this));
 
-    // Initialize route from current hash
-    this.initializeRouteFromHash();
-
     this.logger.debug(
       'Route synchronization enabled',
       {hashPrefix: this.hashPrefix},
@@ -126,16 +123,6 @@ export class ChekinCommunicator {
     this.routeSyncEnabled = false;
     window.removeEventListener('hashchange', this.handleParentHashChange.bind(this));
     this.logger.debug('Route synchronization disabled', undefined, 'COMMUNICATION');
-  }
-
-  private initializeRouteFromHash(): void {
-    const hash = window.location.hash.slice(1);
-    const routeMatch = hash.match(new RegExp(`^${this.hashPrefix}=(.+)`));
-
-    if (routeMatch) {
-      const route = decodeURIComponent(routeMatch[1]);
-      this.syncRouteToIframe(route);
-    }
   }
 
   private handleParentHashChange(): void {
@@ -227,6 +214,32 @@ export class ChekinCommunicator {
       handshakePayload.payload,
       'COMMUNICATION',
     );
+
+    if (this.routeSyncEnabled) {
+      this.sendInitialRoute();
+    }
+  }
+
+  public sendInitialRoute(): void {
+    const hash = window.location.hash.slice(1);
+    const routeMatch = hash.match(new RegExp(`^${this.hashPrefix}=(.+)`));
+
+    if (routeMatch) {
+      const route = decodeURIComponent(routeMatch[1]);
+      const hashRoute = route.startsWith('#') ? route : `#${route}`;
+      this.currentRoute = hashRoute;
+
+      this.send({
+        type: CHEKIN_EVENTS.INIT_ROUTE,
+        payload: {route: hashRoute},
+      });
+
+      this.logger.debug(
+        'Initial route sent to iframe',
+        {route: hashRoute},
+        'COMMUNICATION',
+      );
+    }
   }
 
   public destroy(): void {

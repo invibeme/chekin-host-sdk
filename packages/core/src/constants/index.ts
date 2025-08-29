@@ -10,8 +10,8 @@ export const CHEKIN_EVENTS = {
   POLICE_ACCOUNT_CONNECTION: 'police-account-connection',
   STAT_ACCOUNT_CONNECTION: 'stat-account-connection',
   CONFIG_UPDATE: 'config-update',
-  NAVIGATE: 'navigate',
   ROUTE_CHANGED: 'route-changed',
+  INIT_ROUTE: 'init-route',
 } as const;
 
 export const LOG_LEVELS = {
