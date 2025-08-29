@@ -34,10 +34,8 @@
   },
   "peerDependencies": {
     "react": ">=16.8.0",
-    "react-dom": ">=16.8.0"
-  },
-  "dependencies": {
-    "chekin-host-sdk": "*"
+    "react-dom": ">=16.8.0",
+    "chekin-host-sdk": ">=1.0.0"
   },
   "devDependencies": {
     "tslib": "^2.3.0",

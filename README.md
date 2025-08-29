@@ -102,6 +102,8 @@ This repository contains multiple packages:
 
 ## Configuration
 
+For a complete list of all configuration parameters with detailed descriptions, see the [Complete Parameters Table](./packages/core/README.md#complete-parameters-table) in the core SDK documentation.
+
 ### Basic Configuration
 
 ```javascript

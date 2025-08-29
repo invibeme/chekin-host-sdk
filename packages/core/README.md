@@ -230,12 +230,9 @@ The SDK emits the following events:
 
 - `height-changed` - Iframe content height changes
 - `error` - Error occurs in SDK or iframe
-- `handshake` - Initial communication established
 - `connection-error` - Network or communication error
 - `police-account-connection` - Police account status change
 - `stat-account-connection` - Statistics account status change
-- `config-update` - Configuration updated
-- `navigate` - Navigation within iframe
 
 ## Advanced Usage
 

@@ -116,6 +116,8 @@ The main React component for embedding the Chekin Host SDK.
 
 #### Props
 
+For a complete list of all configuration parameters with detailed descriptions, see the [Complete Parameters Table](../core/README.md#complete-parameters-table) in the core SDK documentation.
+
 The component accepts all configuration options from the core SDK plus additional React-specific props:
 
 | Prop          | Type            | Required | Description                            |
