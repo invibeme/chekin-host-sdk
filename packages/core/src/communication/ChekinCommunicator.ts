@@ -8,7 +8,7 @@ export class ChekinCommunicator {
   private eventListeners: Map<string, ChekinEventCallback[]> = new Map();
   private config: ChekinSDKConfig;
   private logger: ChekinLogger;
-  private currentRoute: string = '/';
+  private currentRoute: string = '#/';
   private routeSyncEnabled: boolean = true;
   private hashPrefix: string = 'chekin';
 
@@ -18,14 +18,21 @@ export class ChekinCommunicator {
     this.logger = logger;
     window.addEventListener('message', this.handleMessage.bind(this));
 
-    // Auto-enable route synchronization by default
-    this.enableRouteSync({hashPrefix: 'chekin'});
-
-    this.logger.debug(
-      'ChekinCommunicator initialized with automatic route sync',
-      undefined,
-      'COMMUNICATION',
-    );
+    if (config.routeSync !== false) {
+      this.enableRouteSync({hashPrefix: 'chekin'});
+      this.logger.debug(
+        'ChekinCommunicator initialized with automatic route sync',
+        undefined,
+        'COMMUNICATION',
+      );
+    } else {
+      this.routeSyncEnabled = false;
+      this.logger.debug(
+        'ChekinCommunicator initialized with route sync disabled',
+        undefined,
+        'COMMUNICATION',
+      );
+    }
   }
 
   private handleMessage(event: MessageEvent<ChekinMessage>) {
@@ -34,9 +41,14 @@ export class ChekinCommunicator {
 
     this.logger.logCommunicationEvent(event.data.type, event.data.payload);
 
-    // Handle route changes from iframe
-    if (event.data.type === 'route-changed' && this.routeSyncEnabled) {
-      this.handleIframeRouteChange((event.data.payload as {route: string})?.route);
+    if (event.data.type === CHEKIN_EVENTS.ROUTE_CHANGED && this.routeSyncEnabled) {
+      const payload = event.data.payload as {
+        path: string;
+        hash: string;
+        title: string;
+        fullUrl: string;
+      };
+      this.handleIframeRouteChange(payload?.hash || payload?.fullUrl);
     }
 
     const listeners = this.eventListeners.get(event.data.type) || [];
@@ -141,32 +153,36 @@ export class ChekinCommunicator {
   }
 
   private handleIframeRouteChange(route: string): void {
-    if (route !== this.currentRoute) {
-      this.currentRoute = route;
-      this.updateParentHash(route);
+    const hashRoute = route.startsWith('#') ? route : `#${route}`;
+
+    if (hashRoute !== this.currentRoute) {
+      this.currentRoute = hashRoute;
+      this.updateParentHash(hashRoute);
       this.logger.debug(
         'Route synchronized from iframe to parent',
-        {route},
+        {route: hashRoute},
         'COMMUNICATION',
       );
     }
   }
 
   private syncRouteToIframe(route: string): void {
-    this.currentRoute = route;
+    const hashRoute = route.startsWith('#') ? route : `#${route}`;
+    this.currentRoute = hashRoute;
     this.send({
       type: 'route-sync',
-      payload: {route},
+      payload: {route: hashRoute},
     });
     this.logger.debug(
       'Route synchronized from parent to iframe',
-      {route},
+      {route: hashRoute},
       'COMMUNICATION',
     );
   }
 
   private updateParentHash(route: string): void {
-    const encodedRoute = encodeURIComponent(route);
+    const cleanRoute = route.startsWith('#') ? route.slice(1) : route;
+    const encodedRoute = encodeURIComponent(cleanRoute);
     const newHash = `#${this.hashPrefix}=${encodedRoute}`;
 
     // Update hash without triggering hashchange event

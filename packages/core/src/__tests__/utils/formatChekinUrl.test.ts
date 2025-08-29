@@ -11,7 +11,7 @@ describe('formatChekinUrl', () => {
     it('should generate URL with default version when no version specified', () => {
       const result = formatChekinUrl(baseConfig);
 
-      expect(result.url).toContain('https://cdn.chekin.com/housings-sdk/latest/');
+      expect(result.url).toContain('https://cdn.chekin.com/host-sdk/latest/');
       expect(result.url).toContain('apiKey=test-api-key');
       expect(result.isLengthLimited).toBe(false);
     });
@@ -42,8 +42,8 @@ describe('formatChekinUrl', () => {
       const resultWithV = formatChekinUrl(configWithV);
       const resultWithoutV = formatChekinUrl(configWithoutV);
 
-      expect(resultWithV.url).toContain('housings-sdk/v1.2.3/');
-      expect(resultWithoutV.url).toContain('housings-sdk/v1.2.3/');
+      expect(resultWithV.url).toContain('host-sdk/v1.2.3/');
+      expect(resultWithoutV.url).toContain('host-sdk/v1.2.3/');
     });
 
     it('should handle "latest" version correctly', () => {
@@ -54,7 +54,7 @@ describe('formatChekinUrl', () => {
 
       const result = formatChekinUrl(config);
 
-      expect(result.url).toContain('housings-sdk/latest/');
+      expect(result.url).toContain('host-sdk/latest/');
     });
 
     it('should handle "development" version correctly', () => {
@@ -65,7 +65,7 @@ describe('formatChekinUrl', () => {
 
       const result = formatChekinUrl(config);
 
-      expect(result.url).toContain('housings-sdk/development/');
+      expect(result.url).toContain('host-sdk/development/');
     });
   });
 

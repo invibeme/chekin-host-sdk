@@ -11,6 +11,7 @@ export const CHEKIN_EVENTS = {
   STAT_ACCOUNT_CONNECTION: 'stat-account-connection',
   CONFIG_UPDATE: 'config-update',
   NAVIGATE: 'navigate',
+  ROUTE_CHANGED: 'route-changed',
 } as const;
 
 export const LOG_LEVELS = {
@@ -21,4 +22,4 @@ export const LOG_LEVELS = {
 } as const;
 
 export type ChekinEventType = keyof typeof CHEKIN_EVENTS;
-export type LogLevel = typeof LOG_LEVELS[keyof typeof LOG_LEVELS];
+export type LogLevel = (typeof LOG_LEVELS)[keyof typeof LOG_LEVELS];

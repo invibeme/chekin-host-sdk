@@ -1,13 +1,18 @@
 import {ChekinSDKConfig} from '../types';
 
+const VersionMapper = {
+  latest: 'latest',
+  development: 'dev',
+  dev: 'dev',
+};
+
 const getBaseUrl = (version = 'latest') => {
-  const normalizedVersion =
-    version === 'latest' || version === 'development'
+  const normalizedVersion = VersionMapper[version as keyof typeof VersionMapper]
+    ? version
+    : version.startsWith('v')
       ? version
-      : version.startsWith('v')
-        ? version
-        : `v${version}`;
-  return `https://cdn.chekin.com/housings-sdk/${normalizedVersion}/`;
+      : `v${version}`;
+  return `https://cdn.chekin.com/host-sdk/${normalizedVersion}/`;
 };
 
 const URL_LENGTH_LIMITS = {

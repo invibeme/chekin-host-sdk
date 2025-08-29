@@ -1,7 +1,7 @@
-import { LOG_LEVELS, type LogLevel } from '../constants';
-import { ChekinSDKConfig } from '../types';
+import {LOG_LEVELS, type LogLevel} from '../constants';
+import {ChekinSDKConfig} from '../types';
 
-export type { LogLevel };
+export type {LogLevel};
 
 export interface LogEntry {
   timestamp: number;
@@ -43,7 +43,7 @@ export class ChekinLogger {
     level: LogLevel,
     message: string,
     data?: unknown,
-    context?: string
+    context?: string,
   ): LogEntry {
     return {
       timestamp: Date.now(),
@@ -76,16 +76,16 @@ export class ChekinLogger {
 
     switch (entry.level) {
       case LOG_LEVELS.DEBUG:
-        console.debug(message, entry.data);
+        console.debug(message, entry.data || '');
         break;
       case LOG_LEVELS.INFO:
-        console.info(message, entry.data);
+        console.info(message, entry.data || '');
         break;
       case LOG_LEVELS.WARN:
-        console.warn(message, entry.data);
+        console.warn(message, entry.data || '');
         break;
       case LOG_LEVELS.ERROR:
-        console.error(message, entry.data);
+        console.error(message, entry.data || '');
         break;
     }
   }
@@ -106,12 +106,7 @@ export class ChekinLogger {
     this.log(LOG_LEVELS.ERROR, message, data, context);
   }
 
-  log(
-    level: LogLevel,
-    message: string,
-    data?: unknown,
-    context?: string
-  ): void {
+  log(level: LogLevel, message: string, data?: unknown, context?: string): void {
     if (!this.shouldLog()) return;
 
     const entry = this.createLogEntry(level, message, data, context);
@@ -123,27 +118,19 @@ export class ChekinLogger {
 
   // SDK Lifecycle logging methods
   logMount(containerId: string, config?: ChekinSDKConfig): void {
-    this.info(
-      `SDK mounted to container: ${containerId}`,
-      { config },
-      'LIFECYCLE'
-    );
+    this.info(`SDK mounted to container: ${containerId}`, {config}, 'LIFECYCLE');
   }
 
   logUnmount(reason?: string): void {
-    this.info(
-      `SDK unmounted${reason ? `: ${reason}` : ''}`,
-      undefined,
-      'LIFECYCLE'
-    );
+    this.info(`SDK unmounted${reason ? `: ${reason}` : ''}`, undefined, 'LIFECYCLE');
   }
 
   logIframeLoad(src: string): void {
-    this.info(`Iframe loaded successfully`, { src }, 'IFRAME');
+    this.info(`Iframe loaded successfully`, {src}, 'IFRAME');
   }
 
   logIframeError(error: unknown, src?: string): void {
-    this.error(`Iframe failed to load`, { error, src }, 'IFRAME');
+    this.error(`Iframe failed to load`, {error, src}, 'IFRAME');
   }
 
   logCommunicationEvent(eventType: string, payload?: unknown): void {
@@ -187,7 +174,7 @@ export class ChekinLogger {
 
   // Update logger configuration
   updateConfig(newConfig: Partial<ChekinLoggerConfig>): void {
-    this.config = { ...this.config, ...newConfig };
+    this.config = {...this.config, ...newConfig};
     this.info('Logger configuration updated', newConfig, 'LOGGER');
   }
 }

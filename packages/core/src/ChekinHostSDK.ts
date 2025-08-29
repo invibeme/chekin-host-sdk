@@ -1,11 +1,8 @@
-import { ChekinSDKConfig, ChekinEventCallback } from './types';
-import { ChekinCommunicator } from './communication/ChekinCommunicator.js';
-import { formatChekinUrl } from './utils/formatChekinUrl.js';
-import { ChekinLogger, type ChekinLoggerConfig } from './utils/ChekinLogger.js';
-import {
-  ChekinSDKValidator,
-  type ValidationResult,
-} from './utils/validation.js';
+import {ChekinSDKConfig, ChekinEventCallback} from './types';
+import {ChekinCommunicator} from './communication/ChekinCommunicator.js';
+import {formatChekinUrl} from './utils/formatChekinUrl.js';
+import {ChekinLogger, type ChekinLoggerConfig} from './utils/ChekinLogger.js';
+import {ChekinSDKValidator, type ValidationResult} from './utils/validation.js';
 import {
   CHEKIN_ROOT_IFRAME_ID,
   CHEKIN_EVENTS,
@@ -25,7 +22,7 @@ export class ChekinHostSDK {
   constructor(
     config: ChekinSDKConfig & {
       logger?: ChekinLoggerConfig;
-    } = {} as ChekinSDKConfig
+    } = {} as ChekinSDKConfig,
   ) {
     this.config = config;
 
@@ -50,26 +47,24 @@ export class ChekinHostSDK {
     const validationResult = this.validator.validateConfig(this.config);
 
     if (validationResult.errors.length > 0) {
-      validationResult.errors.forEach((error) => {
-        this.logger.error(
-          `Validation error in ${error.field}: ${error.message}`,
-          { value: error.value }
-        );
+      validationResult.errors.forEach(error => {
+        this.logger.error(`Validation error in ${error.field}: ${error.message}`, {
+          value: error.value,
+        });
       });
 
       throw new Error(
         `SDK configuration validation failed: ${validationResult.errors
-          .map((e) => e.message)
-          .join(', ')}`
+          .map(e => e.message)
+          .join(', ')}`,
       );
     }
 
     if (validationResult.warnings.length > 0) {
-      validationResult.warnings.forEach((warning) => {
-        this.logger.warn(
-          `Validation warning in ${warning.field}: ${warning.message}`,
-          { value: warning.value }
-        );
+      validationResult.warnings.forEach(warning => {
+        this.logger.warn(`Validation warning in ${warning.field}: ${warning.message}`, {
+          value: warning.value,
+        });
       });
     }
 
@@ -83,7 +78,7 @@ export class ChekinHostSDK {
   // Initialize SDK (similar to your original initialize method)
   public initialize(config: ChekinSDKConfig): void {
     this.logger.info('Initializing SDK with new configuration');
-    this.config = { ...this.config, ...config };
+    this.config = {...this.config, ...config};
     this.validateConfig();
     this.logger.logConfigUpdate(config);
   }
@@ -95,20 +90,16 @@ export class ChekinHostSDK {
     this.logger.info(`Starting render process for container: ${containerId}`);
 
     const targetElement =
-      typeof container === 'string'
-        ? document.getElementById(container)
-        : container;
+      typeof container === 'string' ? document.getElementById(container) : container;
 
     if (!targetElement) {
       const error = new Error(`Container element not found: ${container}`);
-      this.logger.error('Container element not found', { container });
+      this.logger.error('Container element not found', {container});
       throw error;
     }
 
     if (!this.config.apiKey) {
-      const error = new Error(
-        'SDK must be initialized with apiKey before rendering'
-      );
+      const error = new Error('SDK must be initialized with apiKey before rendering');
       this.logger.error('Render failed: SDK not initialized with apiKey');
       throw error;
     }
@@ -137,7 +128,7 @@ export class ChekinHostSDK {
           {
             urlLength: urlResult.url.length,
             hasPostMessageConfig: !!urlResult.postMessageConfig,
-          }
+          },
         );
       }
 
@@ -156,7 +147,7 @@ export class ChekinHostSDK {
 
       this.iframe.setAttribute(
         'sandbox',
-        'allow-modals allow-forms allow-popups allow-scripts allow-same-origin'
+        'allow-modals allow-forms allow-popups allow-scripts allow-same-origin',
       );
 
       this.iframe.onload = () => {
@@ -165,7 +156,7 @@ export class ChekinHostSDK {
           this.communicator = new ChekinCommunicator(
             this.iframe,
             this.config,
-            this.logger
+            this.logger,
           );
           this.setupEventListeners();
 
@@ -181,7 +172,7 @@ export class ChekinHostSDK {
         }
       };
 
-      this.iframe.onerror = (error) => {
+      this.iframe.onerror = error => {
         this.logger.logIframeError(error, this.iframe?.src);
         reject(error);
       };
@@ -209,7 +200,7 @@ export class ChekinHostSDK {
 
     this.logger.debug(
       'Sending additional config via postMessage',
-      this.pendingPostMessageConfig
+      this.pendingPostMessageConfig,
     );
 
     this.communicator.send({
@@ -245,21 +236,18 @@ export class ChekinHostSDK {
       this.communicator.on(CHEKIN_EVENTS.ERROR, this.config.onError);
     }
     if (this.config.onConnectionError) {
-      this.communicator.on(
-        CHEKIN_EVENTS.CONNECTION_ERROR,
-        this.config.onConnectionError
-      );
+      this.communicator.on(CHEKIN_EVENTS.CONNECTION_ERROR, this.config.onConnectionError);
     }
     if (this.config.onPoliceAccountConnection) {
       this.communicator.on(
         CHEKIN_EVENTS.POLICE_ACCOUNT_CONNECTION,
-        this.config.onPoliceAccountConnection
+        this.config.onPoliceAccountConnection,
       );
     }
     if (this.config.onStatAccountConnection) {
       this.communicator.on(
         CHEKIN_EVENTS.STAT_ACCOUNT_CONNECTION,
-        this.config.onStatAccountConnection
+        this.config.onStatAccountConnection,
       );
     }
   }
@@ -289,7 +277,7 @@ export class ChekinHostSDK {
   // Update configuration
   public updateConfig(newConfig: Partial<ChekinSDKConfig>): void {
     this.logger.info('Updating SDK configuration', newConfig);
-    this.config = { ...this.config, ...newConfig };
+    this.config = {...this.config, ...newConfig};
     this.communicator?.send({
       type: CHEKIN_EVENTS.CONFIG_UPDATE,
       payload: this.config,
@@ -302,7 +290,7 @@ export class ChekinHostSDK {
     this.communicator?.navigateToRoute(path);
   }
 
-  public enableRouteSync(options: { hashPrefix?: string } = {}): void {
+  public enableRouteSync(options: {hashPrefix?: string} = {}): void {
     this.logger.info('Enabling route synchronization', options);
     this.communicator?.enableRouteSync(options);
   }
