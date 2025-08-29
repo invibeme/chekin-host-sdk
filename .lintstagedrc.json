@@ -1,0 +1,7 @@
+{
+  "*.{ts,tsx,js,jsx}": [
+    "nx affected --target=lint --fix",
+    "nx affected --target=typecheck"
+  ],
+  "*.{json,md,html,css}": ["prettier --write"]
+}
