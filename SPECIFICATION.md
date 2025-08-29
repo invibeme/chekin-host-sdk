@@ -8,18 +8,25 @@ Moving from the current approach where the SDK app is embedded in the same domai
 **Key Benefits of This Approach**
 
 1. **Better Separation of Concerns**
+
 - SDK logic (initialization, modals, toasts) lives in parent domain
 - Core app logic runs in isolated iframe with separate deployment
 - Clear boundaries between integration layer and application layer
+
 1. **Independent Deployment**
+
 - SDK app can be deployed/updated without affecting the NPM package
 - CDN benefits for the iframe content
 - Better caching strategies
+
 1. **Enhanced Security**
+
 - Proper iframe sandboxing capabilities
 - CSP compliance for parent applications
 - Reduced attack surface
+
 1. **Improved Developer Experience**
+
 - NPM package provides clean React-like API
 - Type-safe integration similar to react-calendly
 - Better error handling and debugging
@@ -31,17 +38,17 @@ Based on react-calendly pattern:
 **// NPM Package Structure**
 ChekinSDK/
 ├── src/
-│   ├── components/
-│   │   ├── InlineWidget.tsx      // Direct embedding
-│   │   ├── PopupWidget.tsx       // Modal integration
+│ ├── components/
+│ │ ├── InlineWidget.tsx // Direct embedding
+│ │ ├── PopupWidget.tsx // Modal integration
 
-│   │   └── PopupButton.tsx       // Trigger component
-│   ├── hooks/
-│   │   └── useChekinEventListener.ts
-│   ├── utils/
-│   │   ├── formatChekinUrl.ts    // URL builder with params
-│   │   └── communication.ts      // postMessage handling
-│   └── index.ts                  // Main exports
+│ │ └── PopupButton.tsx // Trigger component
+│ ├── hooks/
+│ │ └── useChekinEventListener.ts
+│ ├── utils/
+│ │ ├── formatChekinUrl.ts // URL builder with params
+│ │ └── communication.ts // postMessage handling
+│ └── index.ts // Main exports
 
 ### Short Migration Strategy
 
@@ -135,16 +142,19 @@ High-Level Architecture
 Following industry standards and semantic clarity, we're adopting singular naming:
 
 **Before:**
+
 - Repository: `chekin-hosts-sdk`
 - Package: `@chekin/hosts-sdk`
 - Directory: `apps/hosts-sdk/`
 
 **After:**
+
 - Repository: `chekin-host-sdk`
-- Package: `@chekin/host-sdk`
+- Package: `chekin-host-sdk`
 - Directory: `apps/host-sdk/`
 
 **Reasoning:**
+
 - **Industry Standard**: Most SDKs use singular naming (stripe-js, react-calendly, intercom-javascript)
 - **Semantic Clarity**: "Host SDK" = SDK for host management (clearer purpose)
 - **Better Grammar**: "Host" as a feature/domain name vs "Hosts" as plural
@@ -153,10 +163,11 @@ Following industry standards and semantic clarity, we're adopting singular namin
 ### Repository Structure
 
 **Separate SDK Monorepo: `chekin-host-sdk`**
+
 ```
 chekin-host-sdk/
 ├── packages/
-│   ├── core/                        # @chekin/host-sdk (framework-agnostic)
+│   ├── core/                        # chekin-host-sdk (framework-agnostic)
 │   │   ├── src/
 │   │   │   ├── ChekinSDK.ts        # Main vanilla JS class
 │   │   │   ├── communication/       # postMessage handling
@@ -164,7 +175,7 @@ chekin-host-sdk/
 │   │   │   └── types/              # TypeScript definitions
 │   │   └── package.json
 │   │
-│   └── react/                       # @chekin/host-sdk-react (future)
+│   └── react/                       # chekin-host-sdk-react (future)
 │       ├── src/
 │       │   ├── components/         # InlineWidget, PopupWidget
 │       │   ├── hooks/              # useChekinEventListener, etc.
@@ -185,11 +196,12 @@ chekin-host-sdk/
 ```
 
 **Current Monorepo: `dashboard-chekin`**
+
 ```
 apps/host-sdk/                      # Iframe application (to be renamed)
 ├── src/
 │   ├── App.tsx                     # Main application
-│   ├── main.ts                     # Entry point  
+│   ├── main.ts                     # Entry point
 │   ├── communication/              # NEW: Parent communication
 │   │   ├── MessageHandler.ts       # Handle parent messages
 │   │   └── EventEmitter.ts         # Emit events to parent
@@ -201,15 +213,15 @@ apps/host-sdk/                      # Iframe application (to be renamed)
 
 apps/hosts-sdk/
 ├── src/
-│   ├── App.tsx                      # Main application
-│   ├── main.ts                      # Entry point
-│   ├── communication/
-│    │   ├── MessageHandler.ts        # Handle parent messages
-│    │   └── EventEmitter.ts          # Emit events to parent
-│   ├── components/                  # Existing components
-│   ├── views/                       # Existing views
-│   └── utils/
-│     └── parentCommunication.ts   # Parent-iframe utilities
+│ ├── App.tsx # Main application
+│ ├── main.ts # Entry point
+│ ├── communication/
+│ │ ├── MessageHandler.ts # Handle parent messages
+│ │ └── EventEmitter.ts # Emit events to parent
+│ ├── components/ # Existing components
+│ ├── views/ # Existing views
+│ └── utils/
+│ └── parentCommunication.ts # Parent-iframe utilities
 
 ---
 
@@ -220,18 +232,19 @@ apps/hosts-sdk/
 **1.1 Iframe Versioning Strategy (Stripe-like Approach)**
 
 **Always Latest by Default with Optional Pinning**
+
 ```typescript
 // utils/formatChekinUrl.ts
 interface ChekinUrlConfig {
   baseUrl?: string;
   apiKey: string;
-  version?: string;              // NEW: Optional version pinning
+  version?: string; // NEW: Optional version pinning
   features?: string[];
   housingId?: string;
   reservationId?: string;
   defaultLanguage?: string;
   styles?: Record<string, string>;
-  stylesLink?: string;           // NEW: External CSS
+  stylesLink?: string; // NEW: External CSS
 }
 
 export function formatChekinUrl(config: ChekinUrlConfig): string {
@@ -239,14 +252,14 @@ export function formatChekinUrl(config: ChekinUrlConfig): string {
   const baseUrl = config.baseUrl || `https://sdk.chekin.com/${version}/`;
 
   const url = new URL(baseUrl);
-  url.searchParams.set("apiKey", config.apiKey);
+  url.searchParams.set('apiKey', config.apiKey);
 
   if (config.features?.length) {
-    url.searchParams.set("features", config.features.join(","));
+    url.searchParams.set('features', config.features.join(','));
   }
 
   if (config.stylesLink) {
-    url.searchParams.set("stylesLink", encodeURIComponent(config.stylesLink));
+    url.searchParams.set('stylesLink', encodeURIComponent(config.stylesLink));
   }
 
   // Add other parameters...
@@ -255,6 +268,7 @@ export function formatChekinUrl(config: ChekinUrlConfig): string {
 ```
 
 **CDN Structure**
+
 ```
 https://sdk.chekin.com/
 ├── latest/           # Always points to newest version
@@ -268,28 +282,30 @@ https://sdk.chekin.com/
 ```
 
 **Usage Examples**
+
 ```typescript
 // Always latest (recommended)
 const latestSdk = new ChekinSDK({
-  apiKey: "pk_test_...",
+  apiKey: 'pk_test_...',
   // version not specified = latest
 });
 
 // Pinned version (for stability)
 const pinnedSdk = new ChekinSDK({
-  apiKey: "pk_test_...",
-  version: "1.6.2"     // Pin to specific iframe version
+  apiKey: 'pk_test_...',
+  version: '1.6.2', // Pin to specific iframe version
 });
 
 // Development mode
 const devSdk = new ChekinSDK({
-  apiKey: "pk_test_...",
-  baseUrl: "http://localhost:5173/"  // Override entire URL
+  apiKey: 'pk_test_...',
+  baseUrl: 'http://localhost:5173/', // Override entire URL
 });
 ```
 
 **SDK vs Iframe Versioning**
-- **SDK Package Version**: `@chekin/host-sdk@2.1.0` (independent semantic versioning)
+
+- **SDK Package Version**: `chekin-host-sdk@2.1.0` (independent semantic versioning)
 - **Iframe App Version**: `v1.6.2` (deployed to CDN paths)
 - **Compatibility**: SDK includes compatibility matrix for supported iframe versions
 
@@ -348,9 +364,8 @@ export class ChekinSDK {
 
   // Framework-agnostic render method
   public render(container: string | HTMLElement): Promise<void> {
-    const targetElement = typeof container === 'string'
-      ? document.getElementById(container)
-      : container;
+    const targetElement =
+      typeof container === 'string' ? document.getElementById(container) : container;
 
     if (!targetElement) {
       throw new Error(`Container not found: ${container}`);
@@ -400,11 +415,11 @@ export class ChekinSDK {
 
 ```javascript
 // Vanilla JavaScript
-import { ChekinSDK } from '@chekin/host-sdk';
+import {ChekinSDK} from 'chekin-host-sdk';
 
 const sdk = new ChekinSDK({
   apiKey: 'your-api-key',
-  features: ['reservations', 'guests']
+  features: ['reservations', 'guests'],
 });
 
 // Render into DOM element
@@ -413,7 +428,7 @@ sdk.render('chekin-container').then(() => {
 });
 
 // Event handling
-sdk.on('height-changed', (height) => {
+sdk.on('height-changed', height => {
   console.log('New height:', height);
 });
 
@@ -425,10 +440,10 @@ sdk.destroy();
 <!-- HTML Integration -->
 <div id="chekin-widget"></div>
 <script type="module">
-  import { ChekinSDK } from 'https://unpkg.com/@chekin/host-sdk';
+  import {ChekinSDK} from 'https://unpkg.com/chekin-host-sdk';
 
   const sdk = new ChekinSDK({
-    apiKey: 'your-api-key'
+    apiKey: 'your-api-key',
   });
 
   sdk.render('chekin-widget');
@@ -441,9 +456,9 @@ sdk.destroy();
 
 ```tsx
 // components/InlineWidget.tsx
-import React, { useRef, useEffect, useState } from "react";
-import { ChekinCommunicator } from "../utils/communication";
-import { formatChekinUrl } from "../utils/formatChekinUrl";
+import React, {useRef, useEffect, useState} from 'react';
+import {ChekinCommunicator} from '../utils/communication';
+import {formatChekinUrl} from '../utils/formatChekinUrl';
 
 interface InlineWidgetProps {
   apiKey: string;
@@ -461,34 +476,33 @@ interface InlineWidgetProps {
 }
 
 export const InlineWidget: React.FC<InlineWidgetProps> = ({
-                                                            apiKey,
-                                                            baseUrl = "[https://sdk.chekin.com](https://sdk.chekin.com/)",
-                                                            autoHeight = true,
-                                                            onHeightChanged,
-                                                            onError,
-                                                            className = "chekin-inline-widget",
-                                                            style,
-                                                            ...config
-                                                          }) => {
+  apiKey,
+  baseUrl = '[https://sdk.chekin.com](https://sdk.chekin.com/)',
+  autoHeight = true,
+  onHeightChanged,
+  onError,
+  className = 'chekin-inline-widget',
+  style,
+  ...config
+}) => {
   const iframeRef = useRef < HTMLIFrameElement > null;
   const [isLoading, setIsLoading] = useState(true);
-  const [communicator, setCommunicator] =
-  (useState < ChekinCommunicator) | (null > null);
+  const [communicator, setCommunicator] = (useState < ChekinCommunicator) | (null > null);
 
-  const iframeSrc = formatChekinUrl({ apiKey, baseUrl, ...config });
+  const iframeSrc = formatChekinUrl({apiKey, baseUrl, ...config});
 
   useEffect(() => {
     if (iframeRef.current && !communicator) {
       const comm = new ChekinCommunicator(iframeRef.current);
 
-      comm.on("height-changed", (height: number) => {
+      comm.on('height-changed', (height: number) => {
         if (autoHeight && iframeRef.current) {
           iframeRef.current.style.height = `${height}px`;
         }
         onHeightChanged?.(height);
       });
 
-      comm.on("error", (error: any) => {
+      comm.on('error', (error: any) => {
         onError?.(new Error(error.message));
       });
 
@@ -507,10 +521,10 @@ export const InlineWidget: React.FC<InlineWidgetProps> = ({
         ref={iframeRef}
         src={iframeSrc}
         style={{
-          width: "100%",
-          height: autoHeight ? "600px" : "100%",
-          border: "none",
-          display: isLoading ? "none" : "block",
+          width: '100%',
+          height: autoHeight ? '600px' : '100%',
+          border: 'none',
+          display: isLoading ? 'none' : 'block',
         }}
         onLoad={handleLoad}
         title="Chekin Hosts SDK"
@@ -525,36 +539,32 @@ export const InlineWidget: React.FC<InlineWidgetProps> = ({
 
 ```tsx
 // components/PopupWidget.tsx
-import React, { useState, useRef } from "react";
-import { createPortal } from "react-dom";
+import React, {useState, useRef} from 'react';
+import {createPortal} from 'react-dom';
 
-interface PopupWidgetProps
-  extends Omit<InlineWidgetProps, "style" | "className"> {
+interface PopupWidgetProps extends Omit<InlineWidgetProps, 'style' | 'className'> {
   isOpen: boolean;
   onClose: () => void;
   rootElement?: HTMLElement;
 }
 
 export const PopupWidget: React.FC<PopupWidgetProps> = ({
-                                                          isOpen,
-                                                          onClose,
-                                                          rootElement = document.body,
-                                                          ...inlineProps
-                                                        }) => {
+  isOpen,
+  onClose,
+  rootElement = document.body,
+  ...inlineProps
+}) => {
   if (!isOpen) return null;
 
   const modalContent = (
     <div className="chekin-modal-overlay" onClick={onClose}>
-      <div
-        className="chekin-modal-content"
-        onClick={(e) => e.stopPropagation()}
-      >
+      <div className="chekin-modal-content" onClick={e => e.stopPropagation()}>
         <button className="chekin-modal-close" onClick={onClose}>
           ×
         </button>
         <InlineWidget
           {...inlineProps}
-          style={{ height: "80vh", width: "90vw", maxWidth: "800px" }}
+          style={{height: '80vh', width: '90vw', maxWidth: '800px'}}
         />
       </div>
     </div>
@@ -590,7 +600,7 @@ export class MessageHandler {
   }
 
   public sendToParent(type: string, payload: any) {
-    window.parent.postMessage({ type, payload }, this.parentOrigin);
+    window.parent.postMessage({type, payload}, this.parentOrigin);
   }
 
   private updateConfig(config: any) {
@@ -640,6 +650,7 @@ After analyzing industry patterns from companies like TipTap (migrated to tsup),
 - **Nx**: Monorepo management and build orchestration
 
 **Why tsup for Library Building:**
+
 - Zero configuration out of the box
 - TypeScript-first with automatic type generation
 - Dual format output (ESM + CommonJS)
@@ -648,6 +659,7 @@ After analyzing industry patterns from companies like TipTap (migrated to tsup),
 - Used by modern libraries like TipTap v3
 
 **Why Nx for Monorepo Management:**
+
 - Superior TypeScript project references
 - Automatic dependency graph detection
 - Built-in caching for CI/CD
@@ -658,24 +670,24 @@ After analyzing industry patterns from companies like TipTap (migrated to tsup),
 
 ```typescript
 // packages/core/tsup.config.ts
-import { defineConfig } from 'tsup'
+import {defineConfig} from 'tsup';
 
 export default defineConfig({
   entry: ['src/index.ts'],
-  format: ['cjs', 'esm'],           // Dual format: CommonJS + ES modules
-  dts: true,                        // Generate TypeScript declarations
-  splitting: false,                 // Keep bundle simple for SDK
+  format: ['cjs', 'esm'], // Dual format: CommonJS + ES modules
+  dts: true, // Generate TypeScript declarations
+  splitting: false, // Keep bundle simple for SDK
   sourcemap: true,
   clean: true,
-  external: [],                     // No externals for framework-agnostic core
+  external: [], // No externals for framework-agnostic core
   minify: true,
-  target: 'es2018'                  // Browser compatibility
-})
+  target: 'es2018', // Browser compatibility
+});
 ```
 
 ```typescript
-// packages/react/tsup.config.ts  
-import { defineConfig } from 'tsup'
+// packages/react/tsup.config.ts
+import {defineConfig} from 'tsup';
 
 export default defineConfig({
   entry: ['src/index.ts'],
@@ -686,8 +698,8 @@ export default defineConfig({
   clean: true,
   external: ['react', 'react-dom'], // React as peer dependency
   minify: true,
-  target: 'es2018'
-})
+  target: 'es2018',
+});
 ```
 
 **4.3 Nx Monorepo Configuration**
@@ -741,11 +753,11 @@ export default defineConfig({
 ```json
 // packages/core/package.json
 {
-  "name": "@chekin/host-sdk",
+  "name": "chekin-host-sdk",
   "version": "1.0.0",
   "description": "Framework-agnostic Chekin SDK",
   "main": "./dist/index.js",
-  "module": "./dist/index.mjs", 
+  "module": "./dist/index.mjs",
   "types": "./dist/index.d.ts",
   "exports": {
     ".": {
@@ -766,7 +778,7 @@ export default defineConfig({
 ```json
 // packages/react/package.json
 {
-  "name": "@chekin/host-sdk-react", 
+  "name": "chekin-host-sdk-react",
   "version": "1.0.0",
   "description": "React components for Chekin SDK",
   "main": "./dist/index.js",
@@ -774,7 +786,7 @@ export default defineConfig({
   "types": "./dist/index.d.ts",
   "exports": {
     ".": {
-      "types": "./dist/index.d.ts", 
+      "types": "./dist/index.d.ts",
       "import": "./dist/index.mjs",
       "require": "./dist/index.js"
     }
@@ -785,7 +797,7 @@ export default defineConfig({
     "react-dom": ">=16.8.0"
   },
   "dependencies": {
-    "@chekin/host-sdk": "workspace:^"
+    "chekin-host-sdk": "workspace:^"
   }
 }
 ```
@@ -794,21 +806,21 @@ export default defineConfig({
 
 ```tsx
 // apps/hosts-sdk/vite.config.ts (updated)
-export default defineConfig(({ mode }) => {
-  const isCDNBuild = mode === "production";
+export default defineConfig(({mode}) => {
+  const isCDNBuild = mode === 'production';
 
   return {
     // ... existing config
     build: {
       // Remove lib configuration for CDN build
-      outDir: "dist",
+      outDir: 'dist',
       rollupOptions: {
         input: {
-          main: resolve(__dirname, "index.html"),
+          main: resolve(__dirname, 'index.html'),
         },
       },
     },
-    base: isCDNBuild ? "<https://cdn.chekin.com/hosts-sdk/>" : "/",
+    base: isCDNBuild ? '<https://cdn.chekin.com/hosts-sdk/>' : '/',
   };
 });
 ```
@@ -819,45 +831,53 @@ export default defineConfig(({ mode }) => {
 
 Timeline: 8 Weeks
 
-| Phase | Duration | Key Deliverables |
-| --- | --- | --- |
-| Phase 1 |  | Communication layer, URL management |
-| Phase 2 |  | React components, NPM package structure |
-| Phase 3 |  | Iframe app updates, message handling |
-| Phase 4 |  | Build configuration, deployment pipeline |
+| Phase   | Duration | Key Deliverables                         |
+| ------- | -------- | ---------------------------------------- |
+| Phase 1 |          | Communication layer, URL management      |
+| Phase 2 |          | React components, NPM package structure  |
+| Phase 3 |          | Iframe app updates, message handling     |
+| Phase 4 |          | Build configuration, deployment pipeline |
 
 ### Risk Migration
 
 **High Risk Areas**
 
 1. Breaking Changes - Existing integrations may break
+
 - Mitigation: Maintain backward compatibility during transition
 - Rollback Plan: Feature flags for old vs new architecture
+
 2. Cross-Origin Communication - postMessage reliability
+
 - Mitigation: Comprehensive testing across browsers
 - Fallback: Polling mechanism for critical communications
+
 3. Performance Regression - Additional network requests
+
 - Mitigation: Aggressive caching, CDN optimization
 - Monitoring: Performance metrics dashboard
 
 **Medium Risk Areas**
 
 1. CSP Compatibility - Client CSP policies may block iframe
+
 - Mitigation: Clear documentation, CSP helper utilities
+
 2. Mobile Experience - Iframe behavior on mobile devices
+
 - Mitigation: Responsive design, mobile-specific testing
 
 ---
 
 ### Browser Support Matrix
 
-| Browser | Version | Status |
-| --- | --- | --- |
-| Chrome | 90+ | ✅ Supported |
-| Firefox | 88+ | ✅ Supported |
-| Safari | 14+ | ✅ Supported |
-| Edge | 90+ | ✅ Supported |
-| IE | 11 | ❌ Not Supported |
+| Browser | Version | Status           |
+| ------- | ------- | ---------------- |
+| Chrome  | 90+     | ✅ Supported     |
+| Firefox | 88+     | ✅ Supported     |
+| Safari  | 14+     | ✅ Supported     |
+| Edge    | 90+     | ✅ Supported     |
+| IE      | 11      | ❌ Not Supported |
 
 ---
 

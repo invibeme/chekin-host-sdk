@@ -1,4 +1,4 @@
-# @chekin/host-sdk (Core Package)
+# chekin-host-sdk (Core Package)
 
 The core framework-agnostic SDK package for integrating Chekin's host management platform into web applications through secure iframe embedding.
 
@@ -19,13 +19,13 @@ This package provides the foundational `ChekinHostSDK` class that can be used in
 ## Installation
 
 ```bash
-npm install @chekin/host-sdk
+npm install chekin-host-sdk
 ```
 
 ## Quick Start
 
 ```javascript
-import {ChekinHostSDK} from '@chekin/host-sdk';
+import {ChekinHostSDK} from 'chekin-host-sdk';
 
 const sdk = new ChekinHostSDK({
   apiKey: 'your-api-key',
@@ -83,21 +83,13 @@ new ChekinHostSDK(config: ChekinSDKConfig & { logger?: ChekinLoggerConfig })
 
 #### Complete Methods Reference
 
-| Method                      | Parameters                                     | Returns                      | Description                                                                                               |
-| --------------------------- | ---------------------------------------------- | ---------------------------- | --------------------------------------------------------------------------------------------------------- |
-| **render**                  | `container: string \| HTMLElement`             | `Promise<HTMLIFrameElement>` | Renders the SDK iframe into the specified container. Accepts element ID (string) or HTMLElement reference |
-| **destroy**                 | -                                              | `void`                       | Destroys the SDK instance, removes iframe from DOM, and cleans up event listeners                         |
-| **updateConfig**            | `newConfig: Partial<ChekinSDKConfig>`          | `void`                       | Updates SDK configuration and sends changes to iframe. Validates new config before applying               |
-| **on**                      | `event: string, callback: ChekinEventCallback` | `void`                       | Adds event listener for SDK events. Supports all SDK event types with type-safe callbacks                 |
-| **off**                     | `event: string, callback: ChekinEventCallback` | `void`                       | Removes specific event listener. Must pass same callback reference used in `on()`                         |
-| **navigate**                | `path: string`                                 | `void`                       | Navigates to specific path within iframe application (e.g., '/reservations/new')                          |
-| **enableRouteSync**         | `options?: { hashPrefix?: string }`            | `void`                       | Enables URL synchronization between parent window and iframe with optional hash prefix                    |
-| **disableRouteSync**        | -                                              | `void`                       | Disables route synchronization, stopping URL sync between parent and iframe                               |
-| **getCurrentRoute**         | -                                              | `string`                     | Returns current route path from iframe application                                                        |
-| **getLogger**               | -                                              | `ChekinLogger`               | Returns logger instance for custom logging operations with levels (debug, info, warn, error)              |
-| **sendLogs**                | `endpoint?: string`                            | `Promise<void>`              | Sends collected logs to remote endpoint. Uses default endpoint if none provided                           |
-| **getValidationResult**     | -                                              | `ValidationResult`           | Returns current configuration validation result with errors and warnings                                  |
-| **validateConfig** (static) | `config: ChekinSDKConfig`                      | `ValidationResult`           | Static method to validate configuration without creating SDK instance                                     |
+| Method           | Parameters                                     | Returns                      | Description                                                                                               |
+| ---------------- | ---------------------------------------------- | ---------------------------- | --------------------------------------------------------------------------------------------------------- |
+| **render**       | `container: string \| HTMLElement`             | `Promise<HTMLIFrameElement>` | Renders the SDK iframe into the specified container. Accepts element ID (string) or HTMLElement reference |
+| **destroy**      | -                                              | `void`                       | Destroys the SDK instance, removes iframe from DOM, and cleans up event listeners                         |
+| **updateConfig** | `newConfig: Partial<ChekinSDKConfig>`          | `void`                       | Updates SDK configuration and sends changes to iframe. Validates new config before applying               |
+| **on**           | `event: string, callback: ChekinEventCallback` | `void`                       | Adds event listener for SDK events. Supports all SDK event types with type-safe callbacks                 |
+| **off**          | `event: string, callback: ChekinEventCallback` | `void`                       | Removes specific event listener. Must pass same callback reference used in `on()`                         |
 
 #### Method Categories
 
@@ -111,20 +103,6 @@ new ChekinHostSDK(config: ChekinSDKConfig & { logger?: ChekinLoggerConfig })
 
 - `on(event: string, callback: ChekinEventCallback): void`
 - `off(event: string, callback: ChekinEventCallback): void`
-
-**Navigation & Routes**
-
-- `navigate(path: string): void`
-- `enableRouteSync(options?: { hashPrefix?: string }): void`
-- `disableRouteSync(): void`
-- `getCurrentRoute(): string`
-
-**Utilities & Debugging**
-
-- `getLogger(): ChekinLogger`
-- `sendLogs(endpoint?: string): Promise<void>`
-- `getValidationResult(): ValidationResult`
-- `static validateConfig(config: ChekinSDKConfig): ValidationResult`
 
 ### Configuration
 
@@ -276,31 +254,6 @@ sdk.on('error', error => {
 });
 ```
 
-### Route Synchronization
-
-```javascript
-// Enable route sync with hash prefix
-sdk.enableRouteSync({hashPrefix: 'chekin'});
-
-// Navigate programmatically
-sdk.navigate('/reservations/new');
-
-// Get current route
-const currentRoute = sdk.getCurrentRoute();
-```
-
-### Logging
-
-```javascript
-const logger = sdk.getLogger();
-logger.info('Custom log message');
-logger.warn('Warning message');
-logger.error('Error message');
-
-// Send logs to remote endpoint
-await sdk.sendLogs('https://your-log-endpoint.com/api/logs');
-```
-
 ### Configuration Updates
 
 ```javascript
@@ -331,7 +284,7 @@ sdk.updateConfig({
 </template>
 
 <script>
-import {ChekinHostSDK} from '@chekin/host-sdk';
+import {ChekinHostSDK} from 'chekin-host-sdk';
 
 export default {
   mounted() {
@@ -349,7 +302,7 @@ export default {
 
 ```typescript
 import {Component, ElementRef, ViewChild, OnInit, OnDestroy} from '@angular/core';
-import {ChekinHostSDK} from '@chekin/host-sdk';
+import {ChekinHostSDK} from 'chekin-host-sdk';
 
 @Component({
   template: '<div #container class="chekin-container"></div>',
@@ -402,4 +355,4 @@ The core package includes comprehensive tests for all functionality. Use the san
 
 ## Related Packages
 
-- **[@chekin/host-sdk-react](../react/README.md)** - React components and hooks built on this core package _(in development)_
+- **[chekin-host-sdk-react](../react/README.md)** - React components and hooks built on this core package

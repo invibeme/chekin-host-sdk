@@ -1,4 +1,4 @@
-import { defineConfig } from 'tsup'
+import {defineConfig} from 'tsup';
 
 export default defineConfig({
   entry: ['src/index.ts'],
@@ -7,16 +7,16 @@ export default defineConfig({
     compilerOptions: {
       jsx: 'react-jsx',
       skipLibCheck: true,
-      skipDefaultLibCheck: true
-    }
+      skipDefaultLibCheck: true,
+    },
   },
   splitting: false,
   sourcemap: true,
   clean: true,
-  external: ['react', 'react-dom', '@chekin/host-sdk'],
+  external: ['react', 'react-dom', 'chekin-host-sdk'],
   minify: true,
   target: 'es2018',
   loader: {
-    '.tsx': 'tsx'
-  }
-})
+    '.tsx': 'tsx',
+  },
+});

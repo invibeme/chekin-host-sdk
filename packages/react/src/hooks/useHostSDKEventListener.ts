@@ -1,5 +1,5 @@
-import { useEffect, useRef } from 'react';
-import { CHEKIN_EVENTS, ChekinSDKConfig } from '@chekin/host-sdk';
+import {useEffect, useRef} from 'react';
+import {CHEKIN_EVENTS, ChekinSDKConfig} from 'chekin-host-sdk';
 
 export interface HostSDKEventCallbacks
   extends Pick<
@@ -22,7 +22,7 @@ export function useHostSDKEventListener(eventHandlers: HostSDKEventCallbacks) {
     const onMessage = (event: MessageEvent) => {
       if (!event.data || typeof event.data !== 'object') return;
 
-      const { type, payload } = event.data;
+      const {type, payload} = event.data;
 
       switch (type) {
         case CHEKIN_EVENTS.HEIGHT_CHANGED:

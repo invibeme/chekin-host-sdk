@@ -1,5 +1,5 @@
 {
-  "name": "@chekin/host-sdk",
+  "name": "chekin-host-sdk",
   "version": "1.0.0",
   "description": "Framework-agnostic Chekin SDK for host management",
   "author": "vlad-svr",

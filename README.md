@@ -18,21 +18,22 @@ A modern, framework-agnostic SDK for integrating Chekin's host management platfo
 
 ```bash
 # For vanilla JavaScript/TypeScript
-npm install @chekin/host-sdk
+npm install chekin-host-sdk
 
 # For React applications
-npm install @chekin/host-sdk-react
+npm install chekin-host-sdk-react
 ```
 
 ### Basic Usage
 
 #### Vanilla JavaScript
+
 ```javascript
-import { ChekinHostSDK } from '@chekin/host-sdk';
+import {ChekinHostSDK} from 'chekin-host-sdk';
 
 const sdk = new ChekinHostSDK({
   apiKey: 'your-api-key',
-  features: ['reservations', 'guests']
+  features: ['reservations', 'guests'],
 });
 
 sdk.render('chekin-container').then(() => {
@@ -41,36 +42,33 @@ sdk.render('chekin-container').then(() => {
 ```
 
 #### React
+
 ```jsx
-import { ChekinHostSDKView } from '@chekin/host-sdk-react';
+import {ChekinHostSDKView} from 'chekin-host-sdk-react';
 
 function MyComponent() {
   return (
     <ChekinHostSDKView
       apiKey="your-api-key"
       features={['reservations', 'guests']}
-      onHeightChanged={(height) => console.log(height)}
+      onHeightChanged={height => console.log(height)}
     />
   );
 }
 ```
 
 #### React with Event Handling
+
 ```jsx
-import { useHostSDKEventListener, ChekinHostSDKView } from '@chekin/host-sdk-react';
+import {useHostSDKEventListener, ChekinHostSDKView} from 'chekin-host-sdk-react';
 
 function MyComponent() {
   useHostSDKEventListener({
-    onHeightChanged: (height) => console.log('Height:', height),
-    onError: (error) => console.error('SDK Error:', error)
+    onHeightChanged: height => console.log('Height:', height),
+    onError: error => console.error('SDK Error:', error),
   });
 
-  return (
-    <ChekinHostSDKView
-      apiKey="your-api-key"
-      features={['reservations']}
-    />
-  );
+  return <ChekinHostSDKView apiKey="your-api-key" features={['reservations']} />;
 }
 ```
 
@@ -78,8 +76,8 @@ function MyComponent() {
 
 This repository contains multiple packages:
 
-- **[`@chekin/host-sdk`](./packages/core/README.md)** - Core framework-agnostic SDK
-- **`@chekin/host-sdk-react`** - React components and hooks
+- **[`chekin-host-sdk`](./packages/core/README.md)** - Core framework-agnostic SDK
+- **[`chekin-host-sdk-react`](./packages/react/README.md)** - React components and hooks
 - **`apps/host-sdk`** - Iframe application (deployed to CDN)
 
 ## Architecture
@@ -105,6 +103,7 @@ This repository contains multiple packages:
 ## Configuration
 
 ### Basic Configuration
+
 ```javascript
 {
   apiKey: 'your-api-key',          // Required: Your Chekin API key
@@ -116,6 +115,7 @@ This repository contains multiple packages:
 ```
 
 ### Advanced Configuration
+
 ```javascript
 {
   version: '1.6.2',                // Pin to specific version
@@ -136,11 +136,11 @@ This repository contains multiple packages:
 Listen to SDK events for better integration:
 
 ```javascript
-sdk.on('height-changed', (height) => {
+sdk.on('height-changed', height => {
   console.log(`SDK height: ${height}px`);
 });
 
-sdk.on('error', (error) => {
+sdk.on('error', error => {
   console.error('SDK Error:', error.message);
 });
 
@@ -152,12 +152,13 @@ sdk.on('ready', () => {
 ## React Components
 
 ### ChekinHostSDKView
+
 The main React component that embeds the SDK directly in your application:
 
 ```jsx
 import { useRef } from 'react';
-import { ChekinHostSDKView } from '@chekin/host-sdk-react';
-import type { ChekinHostSDKViewHandle } from '@chekin/host-sdk-react';
+import { ChekinHostSDKView } from 'chekin-host-sdk-react';
+import type { ChekinHostSDKViewHandle } from 'chekin-host-sdk-react';
 
 function MyComponent() {
   const sdkRef = useRef<ChekinHostSDKViewHandle>(null);
@@ -180,26 +181,27 @@ function MyComponent() {
 ## React Hooks
 
 ### useHostSDKEventListener
+
 Listen to SDK events with automatic cleanup:
 
 ```jsx
-import { useHostSDKEventListener } from '@chekin/host-sdk-react';
+import {useHostSDKEventListener} from 'chekin-host-sdk-react';
 
 function MyComponent() {
   useHostSDKEventListener({
-    onHeightChanged: (height) => {
+    onHeightChanged: height => {
       console.log('Height changed:', height);
     },
-    onError: (error) => {
+    onError: error => {
       console.error('SDK Error:', error.message);
     },
-    onConnectionError: (error) => {
+    onConnectionError: error => {
       console.error('Connection Error:', error);
     },
-    onPoliceAccountConnection: (data) => {
+    onPoliceAccountConnection: data => {
       console.log('Police account connected:', data);
     },
-    onStatAccountConnection: (data) => {
+    onStatAccountConnection: data => {
       console.log('Stat account connected:', data);
     },
   });
@@ -211,7 +213,9 @@ function MyComponent() {
 ## Security
 
 ### Content Security Policy
+
 Add to your CSP headers:
+
 ```
 frame-src https://sdk.chekin.com;
 connect-src https://api.chekin.com;
@@ -220,10 +224,12 @@ connect-src https://api.chekin.com;
 ## Development
 
 ### Prerequisites
+
 - Node.js 18+
 - npm or pnpm
 
 ### Setup
+
 ```bash
 git clone https://github.com/chekin/chekin-host-sdk.git
 cd chekin-host-sdk
@@ -231,6 +237,7 @@ npm install
 ```
 
 ### Build
+
 ```bash
 # Build all packages
 npm run build
@@ -242,6 +249,7 @@ npm run build:host-sdk
 ```
 
 ### Development
+
 ```bash
 # Start all dev servers
 npm run dev
@@ -253,6 +261,7 @@ nx serve host-sdk
 ```
 
 ### Testing
+
 ```bash
 npm run test
 npm run lint
@@ -261,9 +270,11 @@ npm run typecheck
 
 ## Documentation
 
-- **[API Reference](./docs/api-reference.md)** - Complete API documentation
-- **[Integration Guide](./docs/integration-guide.md)** - Detailed integration instructions
-- **[Migration Guide](./docs/integration-guide.md#migration-guide)** - Migrating from legacy SDK
+For detailed API documentation and examples:
+
+- **[Core SDK Documentation](./packages/core/README.md)** - Complete guide to the framework-agnostic SDK
+- **[React Documentation](./packages/react/README.md)** - React components, hooks, and examples
+- **[Project Architecture](./CLAUDE.md)** - Developer guide and architecture overview
 
 ## Browser Support
 
