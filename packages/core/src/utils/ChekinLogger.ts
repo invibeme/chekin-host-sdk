@@ -1,4 +1,5 @@
 import { LOG_LEVELS, type LogLevel } from '../constants';
+import { ChekinSDKConfig } from '../types';
 
 export type { LogLevel };
 
@@ -6,7 +7,7 @@ export interface LogEntry {
   timestamp: number;
   level: LogLevel;
   message: string;
-  data?: any;
+  data?: unknown;
   context?: string;
 }
 
@@ -35,10 +36,15 @@ export class ChekinLogger {
   }
 
   private shouldLog(): boolean {
-    return !!this.config.enabled
+    return !!this.config.enabled;
   }
 
-  private createLogEntry(level: LogLevel, message: string, data?: any, context?: string): LogEntry {
+  private createLogEntry(
+    level: LogLevel,
+    message: string,
+    data?: unknown,
+    context?: string
+  ): LogEntry {
     return {
       timestamp: Date.now(),
       level,
@@ -50,7 +56,7 @@ export class ChekinLogger {
 
   private addToBuffer(entry: LogEntry): void {
     if (!this.config.buffer) return;
-    
+
     this.logBuffer.push(entry);
     if (this.logBuffer.length > (this.config.bufferSize || 100)) {
       this.logBuffer.shift();
@@ -60,12 +66,14 @@ export class ChekinLogger {
   private formatMessage(entry: LogEntry): string {
     const timestamp = new Date(entry.timestamp).toISOString();
     const context = entry.context ? `[${entry.context}]` : '';
-    return `${this.config.prefix} ${timestamp} ${entry.level.toUpperCase()} ${context} ${entry.message}`;
+    return `${
+      this.config.prefix
+    } ${timestamp} ${entry.level.toUpperCase()} ${context} ${entry.message}`;
   }
 
   private logToConsole(entry: LogEntry): void {
     const message = this.formatMessage(entry);
-    
+
     switch (entry.level) {
       case LOG_LEVELS.DEBUG:
         console.debug(message, entry.data);
@@ -82,54 +90,67 @@ export class ChekinLogger {
     }
   }
 
-  debug(message: string, data?: any, context?: string): void {
+  debug(message: string, data?: unknown, context?: string): void {
     this.log(LOG_LEVELS.DEBUG, message, data, context);
   }
 
-  info(message: string, data?: any, context?: string): void {
+  info(message: string, data?: unknown, context?: string): void {
     this.log(LOG_LEVELS.INFO, message, data, context);
   }
 
-  warn(message: string, data?: any, context?: string): void {
+  warn(message: string, data?: unknown, context?: string): void {
     this.log(LOG_LEVELS.WARN, message, data, context);
   }
 
-  error(message: string, data?: any, context?: string): void {
+  error(message: string, data?: unknown, context?: string): void {
     this.log(LOG_LEVELS.ERROR, message, data, context);
   }
 
-  log(level: LogLevel, message: string, data?: any, context?: string): void {
+  log(
+    level: LogLevel,
+    message: string,
+    data?: unknown,
+    context?: string
+  ): void {
     if (!this.shouldLog()) return;
 
     const entry = this.createLogEntry(level, message, data, context);
     this.addToBuffer(entry);
     this.logToConsole(entry);
-    
+
     this.config.onLog?.(entry);
   }
 
   // SDK Lifecycle logging methods
-  logMount(containerId: string, config?: any): void {
-    this.info(`SDK mounted to container: ${containerId}`, { config }, 'LIFECYCLE');
+  logMount(containerId: string, config?: ChekinSDKConfig): void {
+    this.info(
+      `SDK mounted to container: ${containerId}`,
+      { config },
+      'LIFECYCLE'
+    );
   }
 
   logUnmount(reason?: string): void {
-    this.info(`SDK unmounted${reason ? `: ${reason}` : ''}`, undefined, 'LIFECYCLE');
+    this.info(
+      `SDK unmounted${reason ? `: ${reason}` : ''}`,
+      undefined,
+      'LIFECYCLE'
+    );
   }
 
   logIframeLoad(src: string): void {
     this.info(`Iframe loaded successfully`, { src }, 'IFRAME');
   }
 
-  logIframeError(error: any, src?: string): void {
+  logIframeError(error: unknown, src?: string): void {
     this.error(`Iframe failed to load`, { error, src }, 'IFRAME');
   }
 
-  logCommunicationEvent(eventType: string, payload?: any): void {
+  logCommunicationEvent(eventType: string, payload?: unknown): void {
     this.debug(`Communication event: ${eventType}`, payload, 'COMMUNICATION');
   }
 
-  logConfigUpdate(newConfig: any): void {
+  logConfigUpdate(newConfig: Partial<ChekinSDKConfig>): void {
     this.info(`Configuration updated`, newConfig, 'CONFIG');
   }
 

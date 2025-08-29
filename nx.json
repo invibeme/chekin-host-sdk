@@ -1,12 +1,6 @@
 {
-  "pluginsConfig": {
-    "@nx/js": {
-      "analyzeSourceFiles": true
-    }
-  },
-  "installation": {
-    "version": "21.3.7"
-  },
+  "pluginsConfig": { "@nx/js": { "analyzeSourceFiles": true } },
+  "installation": { "version": "21.4.1" },
   "$schema": "./node_modules/nx/schemas/nx-schema.json",
   "extends": "nx/presets/npm.json",
   "targetDefaults": {
@@ -28,14 +22,8 @@
         "{workspaceRoot}/.eslintignore"
       ]
     },
-    "typecheck": {
-      "cache": true,
-      "inputs": ["default", "^production"]
-    },
-    "publish": {
-      "dependsOn": ["build"],
-      "cache": true
-    },
+    "typecheck": { "cache": true, "inputs": ["default", "^production"] },
+    "publish": { "dependsOn": ["build"], "cache": true },
     "@nx/js:tsc": {
       "cache": true,
       "dependsOn": ["^build"],
@@ -58,9 +46,7 @@
     "sharedGlobals": []
   },
   "generators": {
-    "@nx/js:library": {
-      "bundler": "tsc"
-    },
+    "@nx/js:library": { "bundler": "tsc" },
     "@nx/react": {
       "application": {
         "babel": true,
@@ -68,22 +54,12 @@
         "linter": "none",
         "bundler": "vite"
       },
-      "component": {
-        "style": "css"
-      },
-      "library": {
-        "style": "css",
-        "linter": "none"
-      }
+      "component": { "style": "css" },
+      "library": { "style": "css", "linter": "none" }
     }
   },
   "plugins": [
-    {
-      "plugin": "@nx/eslint/plugin",
-      "options": {
-        "targetName": "lint"
-      }
-    },
+    { "plugin": "@nx/eslint/plugin", "options": { "targetName": "lint" } },
     {
       "plugin": "@nx/react/router-plugin",
       "options": {

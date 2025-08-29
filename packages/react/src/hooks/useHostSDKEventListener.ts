@@ -1,8 +1,15 @@
 import { useEffect, useRef } from 'react';
-import {CHEKIN_EVENTS, ChekinSDKConfig} from "@chekin/host-sdk";
+import { CHEKIN_EVENTS, ChekinSDKConfig } from '@chekin/host-sdk';
 
-export interface HostSDKEventCallbacks extends
-  Pick<ChekinSDKConfig, 'onHeightChanged' | 'onError' | 'onConnectionError' | 'onPoliceAccountConnection' | 'onStatAccountConnection'> {}
+export interface HostSDKEventCallbacks
+  extends Pick<
+    ChekinSDKConfig,
+    | 'onHeightChanged'
+    | 'onError'
+    | 'onConnectionError'
+    | 'onPoliceAccountConnection'
+    | 'onStatAccountConnection'
+  > {}
 
 export function useHostSDKEventListener(eventHandlers: HostSDKEventCallbacks) {
   const callbacksRef = useRef(eventHandlers);

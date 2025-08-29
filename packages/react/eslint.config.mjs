@@ -1,19 +1,7 @@
-import baseConfig from '../../eslint.config.mjs';
+import sharedConfig from '@chekin/eslint-config';
 
 export default [
-  ...baseConfig,
   {
-    files: ['**/*.json'],
-    rules: {
-      '@nx/dependency-checks': [
-        'error',
-        {
-          ignoredFiles: ['{projectRoot}/eslint.config.{js,cjs,mjs,ts,cts,mts}'],
-        },
-      ],
-    },
-    languageOptions: {
-      parser: await import('jsonc-eslint-parser'),
-    },
+    ...sharedConfig,
   },
 ];

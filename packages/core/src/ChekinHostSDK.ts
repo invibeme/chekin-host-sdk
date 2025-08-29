@@ -2,8 +2,16 @@ import { ChekinSDKConfig, ChekinEventCallback } from './types';
 import { ChekinCommunicator } from './communication/ChekinCommunicator.js';
 import { formatChekinUrl } from './utils/formatChekinUrl.js';
 import { ChekinLogger, type ChekinLoggerConfig } from './utils/ChekinLogger.js';
-import { ChekinSDKValidator, type ValidationResult } from './utils/validation.js';
-import { CHEKIN_ROOT_IFRAME_ID, CHEKIN_EVENTS, CHEKIN_IFRAME_TITLE, CHEKIN_IFRAME_NAME } from './constants';
+import {
+  ChekinSDKValidator,
+  type ValidationResult,
+} from './utils/validation.js';
+import {
+  CHEKIN_ROOT_IFRAME_ID,
+  CHEKIN_EVENTS,
+  CHEKIN_IFRAME_TITLE,
+  CHEKIN_IFRAME_NAME,
+} from './constants';
 
 export class ChekinHostSDK {
   private iframe: HTMLIFrameElement | null = null;
@@ -13,51 +21,65 @@ export class ChekinHostSDK {
   private readonly logger: ChekinLogger;
   private pendingPostMessageConfig?: Partial<ChekinSDKConfig>;
   private readonly validator: ChekinSDKValidator;
-  
-  constructor(config: ChekinSDKConfig & { logger?: ChekinLoggerConfig } = {} as any) {
+
+  constructor(
+    config: ChekinSDKConfig & {
+      logger?: ChekinLoggerConfig;
+    } = {} as ChekinSDKConfig
+  ) {
     this.config = config;
-    
+
     const loggerConfig: ChekinLoggerConfig = {
       enabled: !config.disableLogging,
-      ...config.logger
+      ...config.logger,
     };
-    
+
     this.logger = new ChekinLogger(loggerConfig);
     this.validator = new ChekinSDKValidator();
-    
+
     const validationResult = this.validateConfig();
-    this.logger.info('ChekinSDK instance created', { 
+    this.logger.info('ChekinSDK instance created', {
       apiKey: config.apiKey ? '[REDACTED]' : 'missing',
       loggingEnabled: !config.disableLogging,
       validationErrors: validationResult.errors.length,
-      validationWarnings: validationResult.warnings.length
+      validationWarnings: validationResult.warnings.length,
     });
   }
-  
+
   private validateConfig(): ValidationResult {
     const validationResult = this.validator.validateConfig(this.config);
-    
+
     if (validationResult.errors.length > 0) {
-      validationResult.errors.forEach(error => {
-        this.logger.error(`Validation error in ${error.field}: ${error.message}`, { value: error.value });
+      validationResult.errors.forEach((error) => {
+        this.logger.error(
+          `Validation error in ${error.field}: ${error.message}`,
+          { value: error.value }
+        );
       });
-      
-      throw new Error(`SDK configuration validation failed: ${validationResult.errors.map(e => e.message).join(', ')}`);
+
+      throw new Error(
+        `SDK configuration validation failed: ${validationResult.errors
+          .map((e) => e.message)
+          .join(', ')}`
+      );
     }
-    
+
     if (validationResult.warnings.length > 0) {
-      validationResult.warnings.forEach(warning => {
-        this.logger.warn(`Validation warning in ${warning.field}: ${warning.message}`, { value: warning.value });
+      validationResult.warnings.forEach((warning) => {
+        this.logger.warn(
+          `Validation warning in ${warning.field}: ${warning.message}`,
+          { value: warning.value }
+        );
       });
     }
-    
+
     if (validationResult.isValid) {
       this.logger.debug('SDK configuration validated successfully');
     }
-    
+
     return validationResult;
   }
-  
+
   // Initialize SDK (similar to your original initialize method)
   public initialize(config: ChekinSDKConfig): void {
     this.logger.info('Initializing SDK with new configuration');
@@ -65,31 +87,35 @@ export class ChekinHostSDK {
     this.validateConfig();
     this.logger.logConfigUpdate(config);
   }
-  
+
   // Framework-agnostic render method (similar to your renderApp)
   public render(container: string | HTMLElement): Promise<HTMLIFrameElement> {
-    const containerId = typeof container === 'string' ? container : container.id || 'unknown';
+    const containerId =
+      typeof container === 'string' ? container : container.id || 'unknown';
     this.logger.info(`Starting render process for container: ${containerId}`);
-    
-    const targetElement = typeof container === 'string' 
-      ? document.getElementById(container)
-      : container;
-      
+
+    const targetElement =
+      typeof container === 'string'
+        ? document.getElementById(container)
+        : container;
+
     if (!targetElement) {
       const error = new Error(`Container element not found: ${container}`);
       this.logger.error('Container element not found', { container });
       throw error;
     }
-    
+
     if (!this.config.apiKey) {
-      const error = new Error('SDK must be initialized with apiKey before rendering');
+      const error = new Error(
+        'SDK must be initialized with apiKey before rendering'
+      );
       this.logger.error('Render failed: SDK not initialized with apiKey');
       throw error;
     }
-    
+
     return this.createIframe(targetElement);
   }
-  
+
   private createIframe(container: HTMLElement): Promise<HTMLIFrameElement> {
     return new Promise((resolve, reject) => {
       if (this.iframe) {
@@ -99,19 +125,22 @@ export class ChekinHostSDK {
       }
 
       this.iframe = document.createElement('iframe');
-      
+
       // Use new URL formatting to handle length limits
       const urlResult = formatChekinUrl(this.config);
       this.iframe.src = urlResult.url;
       this.pendingPostMessageConfig = urlResult.postMessageConfig;
-      
+
       if (urlResult.isLengthLimited) {
-        this.logger.warn('URL length exceeded safe limits, some config will be sent via postMessage', {
-          urlLength: urlResult.url.length,
-          hasPostMessageConfig: !!urlResult.postMessageConfig
-        });
+        this.logger.warn(
+          'URL length exceeded safe limits, some config will be sent via postMessage',
+          {
+            urlLength: urlResult.url.length,
+            hasPostMessageConfig: !!urlResult.postMessageConfig,
+          }
+        );
       }
-      
+
       this.iframe.style.cssText = `
         width: 100%; 
         height: 100%;
@@ -125,26 +154,33 @@ export class ChekinHostSDK {
       this.iframe.role = 'application';
       this.iframe.id = CHEKIN_ROOT_IFRAME_ID;
 
-      this.iframe.setAttribute('sandbox', 'allow-modals allow-forms allow-popups allow-scripts allow-same-origin');
+      this.iframe.setAttribute(
+        'sandbox',
+        'allow-modals allow-forms allow-popups allow-scripts allow-same-origin'
+      );
 
       this.iframe.onload = () => {
         if (this.iframe) {
           this.logger.logIframeLoad(this.iframe.src);
-          this.communicator = new ChekinCommunicator(this.iframe, this.config, this.logger);
+          this.communicator = new ChekinCommunicator(
+            this.iframe,
+            this.config,
+            this.logger
+          );
           this.setupEventListeners();
 
           // Send handshake as soon as the iframe loads
           this.communicator.sendHandshake();
-          
+
           if (this.pendingPostMessageConfig) {
             this.sendPostMessageConfig();
           }
-          
+
           this.logger.logMount(container.id || 'unknown', this.config);
           resolve(this.iframe);
         }
       };
-      
+
       this.iframe.onerror = (error) => {
         this.logger.logIframeError(error, this.iframe?.src);
         reject(error);
@@ -170,14 +206,17 @@ export class ChekinHostSDK {
 
   private sendPostMessageConfig(): void {
     if (!this.communicator || !this.pendingPostMessageConfig) return;
-    
-    this.logger.debug('Sending additional config via postMessage', this.pendingPostMessageConfig);
-    
+
+    this.logger.debug(
+      'Sending additional config via postMessage',
+      this.pendingPostMessageConfig
+    );
+
     this.communicator.send({
       type: CHEKIN_EVENTS.CONFIG_UPDATE,
-      payload: this.pendingPostMessageConfig
+      payload: this.pendingPostMessageConfig,
     });
-    
+
     this.pendingPostMessageConfig = undefined;
   }
 
@@ -194,7 +233,7 @@ export class ChekinHostSDK {
     // Set up dynamic height handling
     this.communicator.on(CHEKIN_EVENTS.HEIGHT_CHANGED, (height: number) => {
       this.updateIframeHeight(height);
-      
+
       // Also call user's callback if provided
       if (this.config.onHeightChanged) {
         this.config.onHeightChanged(height);
@@ -206,16 +245,25 @@ export class ChekinHostSDK {
       this.communicator.on(CHEKIN_EVENTS.ERROR, this.config.onError);
     }
     if (this.config.onConnectionError) {
-      this.communicator.on(CHEKIN_EVENTS.CONNECTION_ERROR, this.config.onConnectionError);
+      this.communicator.on(
+        CHEKIN_EVENTS.CONNECTION_ERROR,
+        this.config.onConnectionError
+      );
     }
     if (this.config.onPoliceAccountConnection) {
-      this.communicator.on(CHEKIN_EVENTS.POLICE_ACCOUNT_CONNECTION, this.config.onPoliceAccountConnection);
+      this.communicator.on(
+        CHEKIN_EVENTS.POLICE_ACCOUNT_CONNECTION,
+        this.config.onPoliceAccountConnection
+      );
     }
     if (this.config.onStatAccountConnection) {
-      this.communicator.on(CHEKIN_EVENTS.STAT_ACCOUNT_CONNECTION, this.config.onStatAccountConnection);
+      this.communicator.on(
+        CHEKIN_EVENTS.STAT_ACCOUNT_CONNECTION,
+        this.config.onStatAccountConnection
+      );
     }
   }
-  
+
   public destroy(): void {
     this.logger.info('Destroying SDK instance');
     if (this.iframe?.parentNode) {
@@ -228,12 +276,12 @@ export class ChekinHostSDK {
     this.observer = null;
     this.logger.logUnmount('SDK destroyed');
   }
-  
+
   // Event handling
   public on(event: string, callback: ChekinEventCallback): void {
     this.communicator?.on(event, callback);
   }
-  
+
   public off(event: string, callback: ChekinEventCallback): void {
     this.communicator?.off(event, callback);
   }
@@ -244,7 +292,7 @@ export class ChekinHostSDK {
     this.config = { ...this.config, ...newConfig };
     this.communicator?.send({
       type: CHEKIN_EVENTS.CONFIG_UPDATE,
-      payload: this.config
+      payload: this.config,
     });
     this.logger.logConfigUpdate(newConfig);
   }
