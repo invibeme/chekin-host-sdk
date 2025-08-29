@@ -1,12 +1,12 @@
-import { ChekinSDKConfig } from '../types';
+import {ChekinSDKConfig} from '../types';
 
 const getBaseUrl = (version = 'latest') => {
   const normalizedVersion =
-    version === 'latest'
+    version === 'latest' || version === 'development'
       ? version
       : version.startsWith('v')
-      ? version
-      : `v${version}`;
+        ? version
+        : `v${version}`;
   return `https://cdn.chekin.com/housings-sdk/${normalizedVersion}/`;
 };
 
@@ -73,7 +73,7 @@ export function formatChekinUrl(config: ChekinSDKConfig): UrlConfigResult {
     if (encodedStyles.length < 500) {
       url.searchParams.set('styles', encodedStyles);
     } else {
-      postMessageConfig = { ...postMessageConfig, styles: config.styles };
+      postMessageConfig = {...postMessageConfig, styles: config.styles};
       isLengthLimited = true;
     }
   }
@@ -120,10 +120,7 @@ export function formatChekinUrl(config: ChekinSDKConfig): UrlConfigResult {
     }
 
     if (config.externalHousingId) {
-      minimalUrl.searchParams.set(
-        'externalHousingId',
-        config.externalHousingId
-      );
+      minimalUrl.searchParams.set('externalHousingId', config.externalHousingId);
     }
 
     postMessageConfig = {
