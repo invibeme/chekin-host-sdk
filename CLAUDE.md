@@ -106,7 +106,7 @@ import {ChekinHostSDK} from 'chekin-host-sdk';
 
 const sdk = new ChekinHostSDK({
   apiKey: 'your-api-key',
-  features: ['reservations', 'guests'],
+  features: ['IV', 'LIVENESS_DETECTION'],
   autoHeight: true,
   onHeightChanged: height => console.log(`Height: ${height}px`),
 });
@@ -121,7 +121,7 @@ import {ChekinHostSDKView} from 'chekin-host-sdk-react';
 
 <ChekinHostSDKView
   apiKey="your-api-key"
-  features={['reservations']}
+  features={['IV']}
   onHeightChanged={height => console.log(height)}
 />;
 ```

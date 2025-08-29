@@ -20,7 +20,7 @@ A modern, framework-agnostic SDK for integrating Chekin's host management platfo
 # For vanilla JavaScript/TypeScript
 npm install chekin-host-sdk
 
-# For React applications
+# For React applications (In development and not available on npm yet)
 npm install chekin-host-sdk-react
 ```
 
@@ -33,7 +33,7 @@ import {ChekinHostSDK} from 'chekin-host-sdk';
 
 const sdk = new ChekinHostSDK({
   apiKey: 'your-api-key',
-  features: ['reservations', 'guests'],
+  features: ['IV', 'LIVENESS_DETECTION'],
 });
 
 sdk.render('chekin-container').then(() => {
@@ -50,7 +50,7 @@ function MyComponent() {
   return (
     <ChekinHostSDKView
       apiKey="your-api-key"
-      features={['reservations', 'guests']}
+      features={['IV', 'LIVENESS_DETECTION']}
       onHeightChanged={height => console.log(height)}
     />
   );
@@ -68,7 +68,7 @@ function MyComponent() {
     onError: error => console.error('SDK Error:', error),
   });
 
-  return <ChekinHostSDKView apiKey="your-api-key" features={['reservations']} />;
+  return <ChekinHostSDKView apiKey="your-api-key" features={['IV']} />;
 }
 ```
 
@@ -107,7 +107,7 @@ This repository contains multiple packages:
 ```javascript
 {
   apiKey: 'your-api-key',          // Required: Your Chekin API key
-  features: ['reservations'],      // Optional: Enabled features
+  features: ['IV'],                // Optional: Enabled features
   housingId: 'housing-123',        // Optional: Pre-select housing
   reservationId: 'res-456',        // Optional: Pre-load reservation
   defaultLanguage: 'en'            // Optional: Default language
@@ -124,7 +124,7 @@ This repository contains multiple packages:
   stylesLink: 'https://yoursite.com/custom.css',  // External stylesheet
   autoHeight: true,                // Auto-adjust iframe height
   disableLogging: false,           // Enable SDK logging (default)
-  hiddenSections: ['payments'],    // Hide specific sections
+  hiddenSections: ['housing_police'],    // Hide specific sections
   hiddenFormFields: {              // Hide specific form fields
     housingInfo: ['field1', 'field2']
   }
@@ -167,7 +167,7 @@ function MyComponent() {
     <ChekinHostSDKView
       ref={sdkRef}
       apiKey="your-api-key"
-      features={['reservations', 'guests']}
+      features={['IV', 'LIVENESS_DETECTION']}
       autoHeight={true}
       onHeightChanged={(height) => console.log(height)}
       onError={(error) => console.error(error)}

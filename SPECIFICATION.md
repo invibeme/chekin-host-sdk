@@ -419,7 +419,7 @@ import {ChekinSDK} from 'chekin-host-sdk';
 
 const sdk = new ChekinSDK({
   apiKey: 'your-api-key',
-  features: ['reservations', 'guests'],
+  features: ['IV', 'LIVENESS_DETECTION'],
 });
 
 // Render into DOM element
@@ -915,7 +915,7 @@ function MyComponent() {
   return (
     <InlineWidget
       apiKey="your-api-key"
-      features={['reservations', 'guests']}
+      features={['IV', 'LIVENESS_DETECTION']}
       onError={(error) => console.error(error)}
     />
   );

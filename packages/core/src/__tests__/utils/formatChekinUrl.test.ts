@@ -73,7 +73,7 @@ describe('formatChekinUrl', () => {
     it('should add all essential parameters to URL', () => {
       const config: ChekinSDKConfig = {
         apiKey: 'test-key',
-        features: ['reservations', 'guests'],
+        features: ['IV', 'LIVENESS_DETECTION'],
         housingId: 'housing-123',
         externalHousingId: 'ext-housing-456',
         reservationId: 'res-789',
