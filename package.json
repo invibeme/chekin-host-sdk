@@ -6,7 +6,7 @@
   "license": "MIT",
   "repository": "invibeme/chekin-host-sdk",
   "type": "module",
-  "private": true,
+  "private": false,
   "workspaces": [
     "packages/*",
     "apps/*"
