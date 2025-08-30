@@ -227,7 +227,37 @@
             <h3>SDK Configuration</h3>
             <div class="grid">
               <div class="form-group">
-                <label for="sdkVersion">SDK Version</label>
+                <label for="sdkSource">SDK Source</label>
+                <select id="sdkSource" name="sdkSource" onchange="updateSDKSource()">
+                  <option value="local" selected>Local Build (./dist/index.js)</option>
+                  <option value="npm">NPM Package (unpkg.com)</option>
+                </select>
+              </div>
+              <div class="form-group">
+                <label for="npmVersion">NPM Package Version</label>
+                <select
+                  id="npmVersion"
+                  name="npmVersion"
+                  onchange="updateSDKUrl()"
+                  disabled
+                >
+                  <option value="latest" selected>Latest</option>
+                  <option value="beta">Beta</option>
+                  <option value="custom">Custom Version</option>
+                </select>
+              </div>
+              <div class="form-group">
+                <label for="customNpmVersion">Custom NPM Version</label>
+                <input
+                  type="text"
+                  id="customNpmVersion"
+                  name="customNpmVersion"
+                  placeholder="e.g., 1.2.3"
+                  disabled
+                />
+              </div>
+              <div class="form-group">
+                <label for="sdkVersion">SDK App Version</label>
                 <select id="sdkVersion" name="sdkVersion" onchange="updateSDKUrl()">
                   <option value="latest" selected>Latest Production</option>
                   <option value="beta">Beta</option>
@@ -235,7 +265,7 @@
                 </select>
               </div>
               <div class="form-group">
-                <label for="customVersion">Custom Version</label>
+                <label for="customVersion">Custom App Version</label>
                 <input
                   type="text"
                   id="customVersion"
@@ -621,20 +651,15 @@
       <div class="logs" id="logs">Logs will appear here...</div>
     </div>
 
-    <!-- Load Chekin SDK from npm -->
+    <!-- Load Chekin SDK dynamically -->
     <script type="module">
-      import {
-        ChekinHostSDK,
-        formatChekinUrl,
-        ChekinLogger,
-        CHEKIN_EVENTS,
-        // } from 'https://unpkg.com/chekin-host-sdk@latest';
-      } from './dist/index.js';
-
+      // Dynamic SDK loading variables
+      let ChekinHostSDK, formatChekinUrl, ChekinLogger, CHEKIN_EVENTS;
       let sdk = null;
       let logsContainer;
-      let logger = new ChekinLogger({level: 'info'});
+      let logger;
       let isLoading = false;
+      let sdkLoaded = false;
 
       const STORAGE_KEY = 'chekin_combined_sdk_sandbox_config';
 
@@ -682,6 +707,9 @@
       }
 
       const defaultConfig = {
+        sdkSource: 'local',
+        npmVersion: 'latest',
+        customNpmVersion: '',
         sdkVersion: 'latest',
         customVersion: '',
         baseUrl: '',
@@ -715,10 +743,96 @@
         console.log(`[Combined Chekin SDK] ${message}`);
       }
 
+      // SDK Loading Functions
+      function getNpmPackageVersion() {
+        const npmVersionSelect = document.getElementById('npmVersion');
+        const customNpmVersionInput = document.getElementById('customNpmVersion');
+        const selectedVersion = npmVersionSelect.value;
+
+        if (selectedVersion === 'custom' && customNpmVersionInput.value) {
+          return customNpmVersionInput.value;
+        } else if (selectedVersion === 'beta') {
+          return 'beta';
+        } else {
+          return 'latest';
+        }
+      }
+
+      async function loadSDK() {
+        try {
+          const sdkSource = document.getElementById('sdkSource').value;
+          let importUrl;
+
+          if (sdkSource === 'local') {
+            importUrl = './dist/index.js';
+          } else {
+            // NPM package
+            const version = getNpmPackageVersion();
+            importUrl = `https://unpkg.com/chekin-host-sdk@${version}`;
+          }
+
+          log(`Loading SDK from: ${importUrl}`);
+
+          const module = await import(importUrl);
+          ChekinHostSDK = module.ChekinHostSDK;
+          formatChekinUrl = module.formatChekinUrl;
+          ChekinLogger = module.ChekinLogger;
+          CHEKIN_EVENTS = module.CHEKIN_EVENTS;
+
+          if (!ChekinLogger) {
+            // Create basic logger if not available
+            ChekinLogger = class {
+              constructor(options) {
+                this.level = options?.level || 'info';
+              }
+            };
+          }
+
+          logger = new ChekinLogger({level: 'info'});
+          sdkLoaded = true;
+          log(`SDK loaded successfully from ${sdkSource} source`);
+        } catch (error) {
+          log(`Failed to load SDK: ${error.message}`, 'error');
+          throw error;
+        }
+      }
+
+      window.updateSDKSource = function () {
+        const sdkSourceSelect = document.getElementById('sdkSource');
+        const npmVersionSelect = document.getElementById('npmVersion');
+        const customNpmVersionInput = document.getElementById('customNpmVersion');
+        const selectedSource = sdkSourceSelect.value;
+
+        if (selectedSource === 'npm') {
+          npmVersionSelect.disabled = false;
+          updateNpmVersionFields();
+        } else {
+          npmVersionSelect.disabled = true;
+          customNpmVersionInput.disabled = true;
+        }
+
+        // Reset SDK loaded state when source changes
+        sdkLoaded = false;
+        updateUrlPreview();
+      };
+
+      function updateNpmVersionFields() {
+        const npmVersionSelect = document.getElementById('npmVersion');
+        const customNpmVersionInput = document.getElementById('customNpmVersion');
+        const selectedVersion = npmVersionSelect.value;
+
+        if (selectedVersion === 'custom') {
+          customNpmVersionInput.disabled = false;
+        } else {
+          customNpmVersionInput.disabled = true;
+          customNpmVersionInput.value = '';
+        }
+      }
+
       function updateUrlPreview() {
         try {
           const config = getFormData();
-          if (config.apiKey) {
+          if (config.apiKey && formatChekinUrl) {
             const urlResult = formatChekinUrl({
               apiKey: config.apiKey,
               baseUrl: config.baseUrl,
@@ -726,9 +840,12 @@
               features: config.features || [],
             });
             document.getElementById('url-preview').textContent = urlResult.url;
-          } else {
+          } else if (!config.apiKey) {
             document.getElementById('url-preview').textContent =
               'API Key required for URL preview';
+          } else {
+            document.getElementById('url-preview').textContent =
+              'SDK not loaded yet - URL preview will be available after loading';
           }
         } catch (error) {
           document.getElementById('url-preview').textContent = `Error: ${error.message}`;
@@ -880,6 +997,11 @@
             throw new Error('API Key is required');
           }
 
+          // Load SDK if not already loaded or if source changed
+          if (!sdkLoaded || !ChekinHostSDK) {
+            await loadSDK();
+          }
+
           log('Initializing Chekin SDK...');
 
           // Update logger level
@@ -900,23 +1022,25 @@
           sdk = new ChekinHostSDK(config);
 
           // Set up event listeners for all SDK events
-          Object.values(CHEKIN_EVENTS).forEach(eventType => {
-            sdk.on(eventType, data => {
-              switch (eventType) {
-                case CHEKIN_EVENTS.HEIGHT_CHANGED:
-                  log(`Height changed to: ${data.height}px`);
-                  break;
-                case CHEKIN_EVENTS.ROUTE_CHANGED:
-                  log(`Route changed to: ${data.route}`);
-                  break;
-                case CHEKIN_EVENTS.ERROR:
-                  log(`Error: ${data.message}`, 'error');
-                  break;
-                default:
-                  log(`Event ${eventType}: ${JSON.stringify(data)}`, 'debug');
-              }
+          if (CHEKIN_EVENTS && Object.values) {
+            Object.values(CHEKIN_EVENTS).forEach(eventType => {
+              sdk.on(eventType, data => {
+                switch (eventType) {
+                  case CHEKIN_EVENTS.HEIGHT_CHANGED:
+                    log(`Height changed to: ${data.height}px`);
+                    break;
+                  case CHEKIN_EVENTS.ROUTE_CHANGED:
+                    log(`Route changed to: ${data.route}`);
+                    break;
+                  case CHEKIN_EVENTS.ERROR:
+                    log(`Error: ${data.message}`, 'error');
+                    break;
+                  default:
+                    log(`Event ${eventType}: ${JSON.stringify(data)}`, 'debug');
+                }
+              });
             });
-          });
+          }
 
           // Render the SDK
           await sdk.render('chekin-container');
@@ -1070,6 +1194,7 @@
           }
         } else {
           populateForm(defaultConfig);
+          updateSDKSource();
           updateSDKUrl();
           updateUrlPreview();
           log('Combined SDK Sandbox loaded with default configuration.');
@@ -1079,6 +1204,19 @@
         const customVersionInput = document.getElementById('customVersion');
         customVersionInput.addEventListener('input', () => {
           updateSDKUrl();
+          updateUrlPreview();
+        });
+
+        const customNpmVersionInput = document.getElementById('customNpmVersion');
+        customNpmVersionInput.addEventListener('input', () => {
+          sdkLoaded = false; // Force reload when custom NPM version changes
+          updateUrlPreview();
+        });
+
+        const npmVersionSelect = document.getElementById('npmVersion');
+        npmVersionSelect.addEventListener('change', () => {
+          updateNpmVersionFields();
+          sdkLoaded = false; // Force reload when NPM version changes
           updateUrlPreview();
         });
 
