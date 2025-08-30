@@ -132,7 +132,6 @@
             <input
               type="text"
               id="base-url"
-              value="http://localhost:5173"
               placeholder="e.g., https://cdn.chekin.com/host-sdk/dev"
             />
           </div>
@@ -377,7 +376,7 @@ price: 333,
           const enableCallbacks =
             document.getElementById('enable-callbacks').value === 'true';
 
-          if (!baseUrl || !apiKey) {
+          if (!apiKey) {
             throw new Error('Base URL and API Key are required');
           }
 
