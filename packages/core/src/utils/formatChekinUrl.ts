@@ -12,7 +12,7 @@ const getBaseUrl = (version = 'latest') => {
     : version.startsWith('v')
       ? version
       : `v${version}`;
-  return `https://cdn.chekin.com/host-sdk/${normalizedVersion}/`;
+  return `https://cdn.chekin.com/host-sdk/${normalizedVersion}/index.html`;
 };
 
 const URL_LENGTH_LIMITS = {
