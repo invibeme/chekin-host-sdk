@@ -1,6 +1,6 @@
-export const CHEKIN_ROOT_IFRAME_ID = 'chekin-sdk-iframe';
-export const CHEKIN_IFRAME_TITLE = 'Chekin SDK';
-export const CHEKIN_IFRAME_NAME = 'chekin-sdk-frame';
+export const CHEKIN_ROOT_IFRAME_ID = 'chekin-host-sdk-iframe';
+export const CHEKIN_IFRAME_TITLE = 'Chekin Host SDK';
+export const CHEKIN_IFRAME_NAME = 'chekin-host-sdk-frame';
 
 export const CHEKIN_EVENTS = {
   HANDSHAKE: 'handshake',
