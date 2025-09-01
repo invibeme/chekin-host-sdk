@@ -84,7 +84,7 @@ describe('formatChekinUrl', () => {
       const result = formatChekinUrl(config);
 
       expect(result.url).toContain('apiKey=test-key');
-      expect(result.url).toContain('features=reservations%2Cguests');
+      expect(result.url).toContain('features=IV%2CLIVENESS_DETECTION');
       expect(result.url).toContain('housingId=housing-123');
       expect(result.url).toContain('externalHousingId=ext-housing-456');
       expect(result.url).toContain('reservationId=res-789');
