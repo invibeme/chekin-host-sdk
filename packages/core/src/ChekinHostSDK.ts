@@ -27,7 +27,7 @@ export class ChekinHostSDK {
     this.config = config;
 
     const loggerConfig: ChekinLoggerConfig = {
-      enabled: !config.disableLogging,
+      enabled: !!config.enableLogging,
       ...config.logger,
     };
 
@@ -37,7 +37,7 @@ export class ChekinHostSDK {
     const validationResult = this.validateConfig();
     this.logger.info('ChekinSDK instance created', {
       apiKey: config.apiKey ? '[REDACTED]' : 'missing',
-      loggingEnabled: !config.disableLogging,
+      loggingEnabled: !!config.enableLogging,
       validationErrors: validationResult.errors.length,
       validationWarnings: validationResult.warnings.length,
     });

@@ -19,7 +19,7 @@ export interface ChekinSDKConfig {
   styles?: string;
   stylesLink?: string;
   autoHeight?: boolean;
-  disableLogging?: boolean; // Disabled by default (logging enabled)
+  enableLogging?: boolean; // Disabled by default
   routeSync?: boolean; // Route synchronization enabled by default
   hiddenFormFields?: {
     housingInfo?: string[];

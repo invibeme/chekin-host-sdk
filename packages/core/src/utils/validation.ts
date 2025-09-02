@@ -1,4 +1,4 @@
-import { ChekinSDKConfig } from '../types';
+import {ChekinSDKConfig} from '../types';
 
 export interface ValidationError {
   field: string;
@@ -109,9 +109,7 @@ export class ChekinSDKValidator {
           message: 'Version must be a string',
           value: config.version,
         });
-      } else if (
-        !/^(latest|v?\d+\.\d+\.\d+(-[a-z0-9]+)?)$/i.test(config.version)
-      ) {
+      } else if (!/^(latest|v?\d+\.\d+\.\d+(-[a-z0-9]+)?)$/i.test(config.version)) {
         warnings.push({
           field: 'version',
           message:
@@ -137,14 +135,12 @@ export class ChekinSDKValidator {
               value: feature,
             });
           } else if (
-            !SUPPORTED_FEATURES.includes(
-              feature as (typeof SUPPORTED_FEATURES)[number]
-            )
+            !SUPPORTED_FEATURES.includes(feature as (typeof SUPPORTED_FEATURES)[number])
           ) {
             warnings.push({
               field: `features[${index}]`,
               message: `Unknown feature "${feature}". Supported features: ${SUPPORTED_FEATURES.join(
-                ', '
+                ', ',
               )}`,
               value: feature,
             });
@@ -155,12 +151,7 @@ export class ChekinSDKValidator {
 
     // ID validation
     this.validateId(config.housingId, 'housingId', errors, warnings);
-    this.validateId(
-      config.externalHousingId,
-      'externalHousingId',
-      errors,
-      warnings
-    );
+    this.validateId(config.externalHousingId, 'externalHousingId', errors, warnings);
     this.validateId(config.reservationId, 'reservationId', errors, warnings);
 
     // Language validation
@@ -173,7 +164,7 @@ export class ChekinSDKValidator {
         });
       } else if (
         !SUPPORTED_LANGUAGES.includes(
-          config.defaultLanguage as (typeof SUPPORTED_LANGUAGES)[number]
+          config.defaultLanguage as (typeof SUPPORTED_LANGUAGES)[number],
         )
       ) {
         warnings.push({
@@ -217,7 +208,7 @@ export class ChekinSDKValidator {
     }
 
     this.validateBoolean(config.autoHeight, 'autoHeight', errors);
-    this.validateBoolean(config.disableLogging, 'disableLogging', errors);
+    this.validateBoolean(config.enableLogging, 'enableLogging', errors);
 
     // Hidden form fields validation
     if (config.hiddenFormFields) {
@@ -247,30 +238,22 @@ export class ChekinSDKValidator {
 
     // Pay services config validation
     if (config.payServicesConfig) {
-      this.validatePayServicesConfig(
-        config.payServicesConfig,
-        errors,
-        warnings
-      );
+      this.validatePayServicesConfig(config.payServicesConfig, errors, warnings);
     }
 
     // Callback validation
     this.validateCallback(config.onHeightChanged, 'onHeightChanged', errors);
     this.validateCallback(config.onError, 'onError', errors);
-    this.validateCallback(
-      config.onConnectionError,
-      'onConnectionError',
-      errors
-    );
+    this.validateCallback(config.onConnectionError, 'onConnectionError', errors);
     this.validateCallback(
       config.onPoliceAccountConnection,
       'onPoliceAccountConnection',
-      errors
+      errors,
     );
     this.validateCallback(
       config.onStatAccountConnection,
       'onStatAccountConnection',
-      errors
+      errors,
     );
 
     return {
@@ -284,7 +267,7 @@ export class ChekinSDKValidator {
     value: unknown,
     fieldName: string,
     errors: ValidationError[],
-    warnings: ValidationError[]
+    warnings: ValidationError[],
   ): void {
     if (value !== undefined) {
       if (typeof value !== 'string') {
@@ -312,7 +295,7 @@ export class ChekinSDKValidator {
   private validateBoolean(
     value: unknown,
     fieldName: string,
-    errors: ValidationError[]
+    errors: ValidationError[],
   ): void {
     if (value !== undefined && typeof value !== 'boolean') {
       errors.push({
@@ -326,7 +309,7 @@ export class ChekinSDKValidator {
   private validateHiddenFormFields(
     hiddenFormFields: unknown,
     errors: ValidationError[],
-    warnings: ValidationError[]
+    warnings: ValidationError[],
   ): void {
     if (typeof hiddenFormFields !== 'object' || hiddenFormFields === null) {
       errors.push({
@@ -349,7 +332,7 @@ export class ChekinSDKValidator {
         warnings.push({
           field: `hiddenFormFields.${section}`,
           message: `Unknown section "${section}". Valid sections: ${validSections.join(
-            ', '
+            ', ',
           )}`,
           value: section,
         });
@@ -378,7 +361,7 @@ export class ChekinSDKValidator {
   private validatePayServicesConfig(
     payConfig: ChekinSDKConfig['payServicesConfig'],
     errors: ValidationError[],
-    warnings: ValidationError[]
+    warnings: ValidationError[],
   ): void {
     if (typeof payConfig !== 'object' || payConfig === null) {
       errors.push({
@@ -398,7 +381,7 @@ export class ChekinSDKValidator {
         });
       } else if (
         !SUPPORTED_CURRENCIES.includes(
-          payConfig['currency'] as (typeof SUPPORTED_CURRENCIES)[number]
+          payConfig['currency'] as (typeof SUPPORTED_CURRENCIES)[number],
         )
       ) {
         warnings.push({
@@ -412,10 +395,7 @@ export class ChekinSDKValidator {
     }
 
     if (payConfig['liveness']) {
-      if (
-        typeof payConfig['liveness'] !== 'object' ||
-        payConfig['liveness'] === null
-      ) {
+      if (typeof payConfig['liveness'] !== 'object' || payConfig['liveness'] === null) {
         errors.push({
           field: 'payServicesConfig.liveness',
           message: 'Liveness config must be an object',
@@ -448,7 +428,7 @@ export class ChekinSDKValidator {
   private validateCallback(
     callback: unknown,
     fieldName: string,
-    errors: ValidationError[]
+    errors: ValidationError[],
   ): void {
     if (callback !== undefined && typeof callback !== 'function') {
       errors.push({
@@ -474,20 +454,16 @@ export class ChekinSDKValidator {
   }
 
   public static validateLanguage(lang: string): boolean {
-    return SUPPORTED_LANGUAGES.includes(
-      lang as (typeof SUPPORTED_LANGUAGES)[number]
-    );
+    return SUPPORTED_LANGUAGES.includes(lang as (typeof SUPPORTED_LANGUAGES)[number]);
   }
 
   public static validateFeature(feature: string): boolean {
-    return SUPPORTED_FEATURES.includes(
-      feature as (typeof SUPPORTED_FEATURES)[number]
-    );
+    return SUPPORTED_FEATURES.includes(feature as (typeof SUPPORTED_FEATURES)[number]);
   }
 
   public static validateCurrency(currency: string): boolean {
     return SUPPORTED_CURRENCIES.includes(
-      currency as (typeof SUPPORTED_CURRENCIES)[number]
+      currency as (typeof SUPPORTED_CURRENCIES)[number],
     );
   }
 }

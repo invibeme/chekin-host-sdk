@@ -61,7 +61,7 @@ export const ChekinHostSDKView = forwardRef<
     sdkConfig.styles,
     sdkConfig.stylesLink,
     sdkConfig.autoHeight,
-    sdkConfig.disableLogging,
+    sdkConfig.enableLogging,
     sdkConfig.hiddenFormFields,
     sdkConfig.hiddenSections,
     sdkConfig.payServicesConfig,

@@ -125,7 +125,7 @@ For a complete list of all configuration parameters with detailed descriptions, 
   styles: 'body { font-family: Arial, sans-serif; } .primary-color { color: #007cba; }',  // Custom CSS styles as string
   stylesLink: 'https://yoursite.com/custom.css',  // External stylesheet
   autoHeight: true,                // Auto-adjust iframe height
-  disableLogging: false,           // Enable SDK logging (default)
+  enableLogging: false,            // Disable SDK logging (default)
   hiddenSections: ['housing_police'],    // Hide specific sections
   hiddenFormFields: {              // Hide specific form fields
     housingInfo: ['field1', 'field2']

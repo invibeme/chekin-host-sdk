@@ -139,7 +139,7 @@ The component accepts all configuration options from the core SDK plus additiona
 - `styles` - Custom CSS styles as string
 - `stylesLink` - URL to external stylesheet
 - `autoHeight` - Auto-adjust iframe height
-- `disableLogging` - Disable SDK logging
+- `enableLogging` - Enable SDK logging
 - `hiddenSections` - Hide specific sections
 - `hiddenFormFields` - Hide specific form fields
 - `payServicesConfig` - Payment services configuration

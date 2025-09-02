@@ -21,7 +21,7 @@ describe('ChekinSDKValidator', () => {
     styles: 'body { color: red; }',
     stylesLink: 'https://example.com/styles.css',
     autoHeight: true,
-    disableLogging: false,
+    enableLogging: false,
     hiddenFormFields: {
       housingInfo: ['field1'],
       housingPolice: ['field2'],
@@ -383,7 +383,7 @@ describe('ChekinSDKValidator', () => {
     });
 
     describe('boolean fields validation', () => {
-      const booleanFields = ['autoHeight', 'disableLogging'];
+      const booleanFields = ['autoHeight', 'enableLogging'];
 
       booleanFields.forEach(fieldName => {
         describe(`${fieldName}`, () => {
@@ -847,7 +847,7 @@ describe('ChekinSDKValidator', () => {
         styles: undefined,
         stylesLink: undefined,
         autoHeight: undefined,
-        disableLogging: undefined,
+        enableLogging: undefined,
         hiddenFormFields: undefined,
         hiddenSections: undefined,
         payServicesConfig: undefined,
