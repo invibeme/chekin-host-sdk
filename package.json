@@ -1,6 +1,6 @@
 {
   "name": "chekin-host-sdk",
-  "version": "1.0.0",
+  "version": "1.0.7",
   "description": "Chekin Host SDK - Framework-agnostic monorepo for host management SDK",
   "author": "vlad-svr",
   "license": "MIT",
