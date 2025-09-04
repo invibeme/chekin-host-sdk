@@ -2,7 +2,7 @@
 
 The core framework-agnostic SDK package for integrating Chekin's host management platform into web applications through secure iframe embedding.
 
-> **Migrating from ChekinHousingsSDK?** See the [Migration Guide](../../MIGRATION_GUIDE.md) for step-by-step instructions.
+> **Migrating from ChekinHousingsSDK?** See the [Migration Guide](https://github.com/invibeme/chekin-host-sdk/blob/main/MIGRATION_GUIDE.md) for step-by-step instructions.
 
 ## Overview
 
