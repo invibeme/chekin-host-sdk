@@ -1,4 +1,4 @@
-# chekin-host-sdk (Core Package)
+# @chekinapp/host-sdk (Core Package)
 
 The core framework-agnostic SDK package for integrating Chekin's host management platform into web applications through secure iframe embedding.
 
@@ -21,13 +21,13 @@ This package provides the foundational `ChekinHostSDK` class that can be used in
 ## Installation
 
 ```bash
-npm install chekin-host-sdk
+npm install @chekinapp/host-sdk
 ```
 
 ## Quick Start
 
 ```javascript
-import {ChekinHostSDK} from 'chekin-host-sdk';
+import {ChekinHostSDK} from '@chekinapp/host-sdk';
 
 const sdk = new ChekinHostSDK({
   apiKey: 'your-api-key',
@@ -283,7 +283,7 @@ sdk.updateConfig({
 </template>
 
 <script>
-import {ChekinHostSDK} from 'chekin-host-sdk';
+import {ChekinHostSDK} from '@chekinapp/host-sdk';
 
 export default {
   mounted() {
@@ -301,7 +301,7 @@ export default {
 
 ```typescript
 import {Component, ElementRef, ViewChild, OnInit, OnDestroy} from '@angular/core';
-import {ChekinHostSDK} from 'chekin-host-sdk';
+import {ChekinHostSDK} from '@chekinapp/host-sdk';
 
 @Component({
   template: '<div #container class="chekin-container"></div>',
@@ -354,4 +354,4 @@ The core package includes comprehensive tests for all functionality. Use the san
 
 ## Related Packages
 
-- **[chekin-host-sdk-react](../react/README.md)** - React components and hooks built on this core package (IN DEVELOPMENT - not yet available on npm)
+- **[@chekinapp/host-sdk-react](../react/README.md)** - React components and hooks built on this core package (IN DEVELOPMENT - not yet available on npm)

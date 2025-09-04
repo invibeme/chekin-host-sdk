@@ -1,6 +1,6 @@
-# chekin-host-sdk-react
+# @chekinapp/host-sdk-react
 
-React components and hooks for integrating Chekin's host management platform into React applications. Built on top of the core `chekin-host-sdk` package.
+React components and hooks for integrating Chekin's host management platform into React applications. Built on top of the core `@chekinapp/host-sdk` package.
 
 ## Overview
 
@@ -17,17 +17,17 @@ This package provides React-specific components and hooks that make it easy to i
 ## Installation
 
 ```bash
-npm install chekin-host-sdk-react
+npm install @chekinapp/host-sdk-react
 ```
 
-**Note**: This package has peer dependencies on `react` and `react-dom` (>=16.8.0), and automatically includes the core `chekin-host-sdk` package.
+**Note**: This package has peer dependencies on `react` and `react-dom` (>=16.8.0), and automatically includes the core `@chekinapp/host-sdk` package.
 
 ## Quick Start
 
 ### Basic Component Usage
 
 ```jsx
-import {ChekinHostSDKView} from 'chekin-host-sdk-react';
+import {ChekinHostSDKView} from '@chekinapp/host-sdk-react';
 
 function MyComponent() {
   return (
@@ -46,8 +46,8 @@ function MyComponent() {
 
 ```jsx
 import { useRef } from 'react';
-import { ChekinHostSDKView } from 'chekin-host-sdk-react';
-import type { ChekinHostSDKViewHandle } from 'chekin-host-sdk-react';
+import { ChekinHostSDKView } from '@chekinapp/host-sdk-react';
+import type { ChekinHostSDKViewHandle } from '@chekinapp/host-sdk-react';
 
 function MyComponent() {
   const sdkRef = useRef<ChekinHostSDKViewHandle>(null);
@@ -78,7 +78,7 @@ function MyComponent() {
 ### Using Event Listener Hook
 
 ```jsx
-import {ChekinHostSDKView, useHostSDKEventListener} from 'chekin-host-sdk-react';
+import {ChekinHostSDKView, useHostSDKEventListener} from '@chekinapp/host-sdk-react';
 
 function MyComponent() {
   useHostSDKEventListener({
@@ -200,7 +200,7 @@ useHostSDKEventListener({
 ### Custom Styling
 
 ```jsx
-import {ChekinHostSDKView} from 'chekin-host-sdk-react';
+import {ChekinHostSDKView} from '@chekinapp/host-sdk-react';
 
 function StyledSDK() {
   const customStyles = `
@@ -236,8 +236,8 @@ function StyledSDK() {
 
 ```jsx
 import { useState, useRef } from 'react';
-import { ChekinHostSDKView } from 'chekin-host-sdk-react';
-import type { ChekinHostSDKViewHandle } from 'chekin-host-sdk-react';
+import { ChekinHostSDKView } from '@chekinapp/host-sdk-react';
+import type { ChekinHostSDKViewHandle } from '@chekinapp/host-sdk-react';
 
 function DynamicSDK() {
   const [selectedFeatures, setSelectedFeatures] = useState(['reservations']);
@@ -285,7 +285,7 @@ function DynamicSDK() {
 
 ```jsx
 import {useState} from 'react';
-import {ChekinHostSDKView, useHostSDKEventListener} from 'chekin-host-sdk-react';
+import {ChekinHostSDKView, useHostSDKEventListener} from '@chekinapp/host-sdk-react';
 
 function SDKWithErrorHandling() {
   const [error, setError] = (useState < string) | (null > null);
@@ -337,10 +337,10 @@ import type {
   ChekinHostSDKViewProps,
   ChekinHostSDKViewHandle,
   HostSDKEventCallbacks,
-} from 'chekin-host-sdk-react';
+} from '@chekinapp/host-sdk-react';
 
 // All core SDK types are also re-exported
-import type {ChekinSDKConfig} from 'chekin-host-sdk-react';
+import type {ChekinSDKConfig} from '@chekinapp/host-sdk-react';
 ```
 
 ## Browser Support
@@ -372,7 +372,7 @@ This package requires:
 
 ## Related Packages
 
-- **[chekin-host-sdk](../core/README.md)** - Core framework-agnostic SDK that this package is built on
+- **[@chekinapp/host-sdk](../core/README.md)** - Core framework-agnostic SDK that this package is built on
 
 ## License
 

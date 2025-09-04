@@ -1,5 +1,5 @@
 {
-  "name": "chekin-host-sdk-react",
+  "name": "@chekinapp/host-sdk-react",
   "version": "1.0.0",
   "description": "Chekin Host SDK integration for React apps",
   "author": "vlad-svr",
@@ -35,7 +35,7 @@
   "peerDependencies": {
     "react": ">=16.8.0",
     "react-dom": ">=16.8.0",
-    "chekin-host-sdk": ">=1.0.0"
+    "@chekinapp/host-sdk": ">=1.0.0"
   },
   "devDependencies": {
     "tslib": "^2.3.0",

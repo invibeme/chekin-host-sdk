@@ -31,9 +31,9 @@ The new **ChekinHostSDK** is a complete rewrite that offers:
 
 ```bash
 # NPM/Yarn
-npm install chekin-host-sdk
+npm install @chekinapp/host-sdk
 # Or for React (in development - not yet available)
-npm install chekin-host-sdk-react
+npm install @chekinapp/host-sdk-react
 ```
 
 ## API Changes
@@ -70,7 +70,7 @@ sdk.renderApp({targetNode: 'root'});
 #### New Pattern
 
 ```javascript
-import {ChekinHostSDK} from 'chekin-host-sdk';
+import {ChekinHostSDK} from '@chekinapp/host-sdk';
 
 // Option 1: Constructor + render
 const sdk = new ChekinHostSDK({
@@ -135,7 +135,7 @@ interface ChekinSDKConfig {
 
 ## React Migration
 
-> **Note**: The React package (`chekin-host-sdk-react`) is currently in development and not yet available. For now, continue using the vanilla JS SDK with React as shown in the legacy pattern below.
+> **Note**: The React package (`@chekinapp/host-sdk-react`) is currently in development and not yet available. For now, continue using the vanilla JS SDK with React as shown in the legacy pattern below.
 
 ### Legacy Pattern (Vanilla JS in React)
 
@@ -166,7 +166,7 @@ function MyComponent() {
 ### New Pattern (React Components)
 
 ```jsx
-import {ChekinHostSDKView} from 'chekin-host-sdk-react';
+import {ChekinHostSDKView} from '@chekinapp/host-sdk-react';
 
 function MyComponent() {
   return (
@@ -184,7 +184,7 @@ function MyComponent() {
 
 ```jsx
 import {useRef} from 'react';
-import {ChekinHostSDKView} from 'chekin-host-sdk-react';
+import {ChekinHostSDKView} from '@chekinapp/host-sdk-react';
 
 function MyComponent() {
   const sdkRef = useRef();

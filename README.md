@@ -20,10 +20,10 @@ A modern, framework-agnostic SDK for integrating Chekin's host management platfo
 
 ```bash
 # For vanilla JavaScript/TypeScript
-npm install chekin-host-sdk
+npm install @chekinapp/host-sdk
 
 # For React applications (In development and not available on npm yet)
-# npm install chekin-host-sdk-react
+# npm install @chekinapp/host-sdk-react
 ```
 
 ### Basic Usage
@@ -31,7 +31,7 @@ npm install chekin-host-sdk
 #### Vanilla JavaScript
 
 ```javascript
-import {ChekinHostSDK} from 'chekin-host-sdk';
+import {ChekinHostSDK} from '@chekinapp/host-sdk';
 
 const sdk = new ChekinHostSDK({
   apiKey: 'your-api-key',
@@ -48,7 +48,7 @@ sdk.render('chekin-container').then(() => {
 > **Note**: React components are currently in development and not yet available on npm.
 
 ```jsx
-import {ChekinHostSDKView} from 'chekin-host-sdk-react';
+import {ChekinHostSDKView} from '@chekinapp/host-sdk-react';
 
 function MyComponent() {
   return (
@@ -64,7 +64,7 @@ function MyComponent() {
 #### React with Event Handling
 
 ```jsx
-import {useHostSDKEventListener, ChekinHostSDKView} from 'chekin-host-sdk-react';
+import {useHostSDKEventListener, ChekinHostSDKView} from '@chekinapp/host-sdk-react';
 
 function MyComponent() {
   useHostSDKEventListener({
@@ -80,8 +80,8 @@ function MyComponent() {
 
 This repository contains multiple packages:
 
-- **[`chekin-host-sdk`](./packages/core/README.md)** - Core framework-agnostic SDK
-- **[`chekin-host-sdk-react`](./packages/react/README.md)** - React components and hooks (IN DEVELOPMENT)
+- **[`@chekinapp/host-sdk`](./packages/core/README.md)** - Core framework-agnostic SDK
+- **[`@chekinapp/host-sdk-react`](./packages/react/README.md)** - React components and hooks (IN DEVELOPMENT)
 - **`apps/host-sdk`** - Iframe application (deployed to CDN)
 
 ## Architecture
@@ -180,8 +180,8 @@ The main React component that embeds the SDK directly in your application:
 
 ```jsx
 import { useRef } from 'react';
-import { ChekinHostSDKView } from 'chekin-host-sdk-react';
-import type { ChekinHostSDKViewHandle } from 'chekin-host-sdk-react';
+import { ChekinHostSDKView } from '@chekinapp/host-sdk-react';
+import type { ChekinHostSDKViewHandle } from '@chekinapp/host-sdk-react';
 
 function MyComponent() {
   const sdkRef = useRef<ChekinHostSDKViewHandle>(null);
@@ -208,7 +208,7 @@ function MyComponent() {
 Listen to SDK events with automatic cleanup:
 
 ```jsx
-import {useHostSDKEventListener} from 'chekin-host-sdk-react';
+import {useHostSDKEventListener} from '@chekinapp/host-sdk-react';
 
 function MyComponent() {
   useHostSDKEventListener({

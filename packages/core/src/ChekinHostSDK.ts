@@ -184,8 +184,9 @@ export class ChekinHostSDK {
         this.logger.logIframeError(error, this.iframe?.src);
         reject(error);
       };
+      console.log('fdfdsdfgdsadfgds');
       container.appendChild(this.iframe);
-      this.observeContainerRemoval(container);
+      // this.observeContainerRemoval(container);
     });
   }
 

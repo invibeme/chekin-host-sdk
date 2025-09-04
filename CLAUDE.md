@@ -11,16 +11,16 @@ This is the **Chekin Host SDK** repository - a framework-agnostic monorepo for i
 The project is a **Nx-based monorepo** with the following structure:
 
 ```
-chekin-host-sdk/
+@chekinapp/host-sdk/
 ├── packages/
-│   ├── core/                    # chekin-host-sdk (vanilla JS/TS, framework-agnostic)
+│   ├── core/                    # @chekinapp/host-sdk (vanilla JS/TS, framework-agnostic)
 │   │   ├── src/
 │   │   │   ├── ChekinHostSDK.ts        # Main SDK class
 │   │   │   ├── communication/          # postMessage handling
 │   │   │   ├── utils/                  # Utilities (URL formatting, logging, validation)
 │   │   │   └── types/                  # TypeScript definitions
 │   │   └── sandbox.html               # Development sandbox
-│   └── react/                   # chekin-host-sdk-react (React components)
+│   └── react/                   # @chekinapp/host-sdk-react (React components)
 │       ├── src/components/             # ChekinHostSDKView
 │       └── src/hooks/                  # useHostSDKEventListener
 ├── docs/                        # API documentation
@@ -102,7 +102,7 @@ Main SDK class providing:
 ### Basic Initialization
 
 ```typescript
-import {ChekinHostSDK} from 'chekin-host-sdk';
+import {ChekinHostSDK} from '@chekinapp/host-sdk';
 
 const sdk = new ChekinHostSDK({
   apiKey: 'your-api-key',
@@ -117,7 +117,7 @@ await sdk.render('container-element');
 ### React Integration
 
 ```jsx
-import {ChekinHostSDKView} from 'chekin-host-sdk-react';
+import {ChekinHostSDKView} from '@chekinapp/host-sdk-react';
 
 <ChekinHostSDKView
   apiKey="your-api-key"

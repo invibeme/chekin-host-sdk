@@ -13,7 +13,7 @@ export default defineConfig({
   splitting: false,
   sourcemap: true,
   clean: true,
-  external: ['react', 'react-dom', 'chekin-host-sdk'],
+  external: ['react', 'react-dom', '@chekinapp/host-sdk'],
   minify: true,
   target: 'es2018',
   loader: {
