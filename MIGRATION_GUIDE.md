@@ -115,7 +115,7 @@ Most configuration options remain the same, with these additions:
 #### New Options in ChekinHostSDK
 
 ```typescript
-interface ChekinSDKConfig {
+interface ChekinHostSDKConfig {
   // ... all legacy options supported ...
 
   // New options:

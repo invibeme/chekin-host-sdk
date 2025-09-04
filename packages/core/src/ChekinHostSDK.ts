@@ -1,4 +1,4 @@
-import {ChekinSDKConfig, ChekinEventCallback} from './types';
+import {ChekinHostSDKConfig, ChekinEventCallback} from './types';
 import {ChekinCommunicator} from './communication/ChekinCommunicator.js';
 import {formatChekinUrl} from './utils/formatChekinUrl.js';
 import {ChekinLogger, type ChekinLoggerConfig} from './utils/ChekinLogger.js';
@@ -13,16 +13,16 @@ import {
 export class ChekinHostSDK {
   private iframe: HTMLIFrameElement | null = null;
   private communicator: ChekinCommunicator | null = null;
-  private config: ChekinSDKConfig;
+  private config: ChekinHostSDKConfig;
   private observer: MutationObserver | null = null;
   private readonly logger: ChekinLogger;
-  private pendingPostMessageConfig?: Partial<ChekinSDKConfig>;
+  private pendingPostMessageConfig?: Partial<ChekinHostSDKConfig>;
   private readonly validator: ChekinSDKValidator;
 
   constructor(
-    config: ChekinSDKConfig & {
+    config: ChekinHostSDKConfig & {
       logger?: ChekinLoggerConfig;
-    } = {} as ChekinSDKConfig,
+    } = {} as ChekinHostSDKConfig,
   ) {
     this.config = config;
 
@@ -76,7 +76,7 @@ export class ChekinHostSDK {
   }
 
   // Initialize SDK (similar to your original initialize method)
-  public initialize(config: ChekinSDKConfig): void {
+  public initialize(config: ChekinHostSDKConfig): void {
     this.logger.info('Initializing SDK with new configuration');
     this.config = {...this.config, ...config};
     this.validateConfig();
@@ -84,7 +84,7 @@ export class ChekinHostSDK {
   }
 
   public initAndRender(
-    config: ChekinSDKConfig & {targetNode: string},
+    config: ChekinHostSDKConfig & {targetNode: string},
   ): Promise<HTMLIFrameElement> {
     const {targetNode, ...sdkConfig} = config;
     this.initialize(sdkConfig);
@@ -283,7 +283,7 @@ export class ChekinHostSDK {
   }
 
   // Update configuration
-  public updateConfig(newConfig: Partial<ChekinSDKConfig>): void {
+  public updateConfig(newConfig: Partial<ChekinHostSDKConfig>): void {
     this.logger.info('Updating SDK configuration', newConfig);
     this.config = {...this.config, ...newConfig};
     this.communicator?.send({
@@ -320,7 +320,7 @@ export class ChekinHostSDK {
     await this.logger.sendLogs(endpoint);
   }
 
-  public static validateConfig(config: ChekinSDKConfig): ValidationResult {
+  public static validateConfig(config: ChekinHostSDKConfig): ValidationResult {
     const validator = new ChekinSDKValidator();
     return validator.validateConfig(config);
   }

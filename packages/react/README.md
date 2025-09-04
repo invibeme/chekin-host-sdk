@@ -120,12 +120,12 @@ For a complete list of all configuration parameters with detailed descriptions, 
 
 The component accepts all configuration options from the core SDK plus additional React-specific props:
 
-| Prop          | Type            | Required | Description                            |
-| ------------- | --------------- | -------- | -------------------------------------- |
-| `apiKey`      | `string`        | ✅       | Your Chekin API key                    |
-| `className`   | `string`        | ❌       | CSS class for the container div        |
-| `style`       | `CSSProperties` | ❌       | Inline styles for the container div    |
-| ...SDK config | Various         | ❌       | All other props from `ChekinSDKConfig` |
+| Prop          | Type            | Required | Description                                |
+| ------------- | --------------- | -------- | ------------------------------------------ |
+| `apiKey`      | `string`        | ✅       | Your Chekin API key                        |
+| `className`   | `string`        | ❌       | CSS class for the container div            |
+| `style`       | `CSSProperties` | ❌       | Inline styles for the container div        |
+| ...SDK config | Various         | ❌       | All other props from `ChekinHostSDKConfig` |
 
 **Core SDK Configuration Props:**
 
@@ -340,7 +340,7 @@ import type {
 } from '@chekinapp/host-sdk-react';
 
 // All core SDK types are also re-exported
-import type {ChekinSDKConfig} from '@chekinapp/host-sdk-react';
+import type {ChekinHostSDKConfig} from '@chekinapp/host-sdk-react';
 ```
 
 ## Browser Support

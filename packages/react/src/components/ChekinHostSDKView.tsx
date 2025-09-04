@@ -1,7 +1,7 @@
 import {useEffect, useRef, useImperativeHandle, forwardRef, CSSProperties} from 'react';
-import {ChekinHostSDK, ChekinSDKConfig} from '@chekinapp/host-sdk';
+import {ChekinHostSDK, ChekinHostSDKConfig} from '@chekinapp/host-sdk';
 
-export interface ChekinHostSDKViewProps extends ChekinSDKConfig {
+export interface ChekinHostSDKViewProps extends ChekinHostSDKConfig {
   className?: string;
   style?: CSSProperties;
 }

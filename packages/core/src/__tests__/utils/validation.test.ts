@@ -1,6 +1,6 @@
 import {describe, it, expect, beforeEach} from 'vitest';
 import {ChekinSDKValidator} from '../../utils/validation';
-import {ChekinSDKConfig} from '../../types';
+import {ChekinHostSDKConfig} from '../../types';
 
 describe('ChekinSDKValidator', () => {
   let validator: ChekinSDKValidator;
@@ -9,7 +9,7 @@ describe('ChekinSDKValidator', () => {
     validator = new ChekinSDKValidator();
   });
 
-  const createValidConfig = (): ChekinSDKConfig => ({
+  const createValidConfig = (): ChekinHostSDKConfig => ({
     apiKey: 'valid-api-key-12345',
     baseUrl: 'https://api.example.com',
     version: '1.0.0',
@@ -50,7 +50,7 @@ describe('ChekinSDKValidator', () => {
       });
 
       it('should validate minimal valid configuration', () => {
-        const config: ChekinSDKConfig = {
+        const config: ChekinHostSDKConfig = {
           apiKey: 'valid-api-key-12345',
         };
         const result = validator.validateConfig(config);
@@ -440,7 +440,7 @@ describe('ChekinSDKValidator', () => {
         const config = {
           ...createValidConfig(),
           hiddenFormFields:
-            'not-object' as unknown as ChekinSDKConfig['hiddenFormFields'],
+            'not-object' as unknown as ChekinHostSDKConfig['hiddenFormFields'],
         };
         const result = validator.validateConfig(config);
 
@@ -455,7 +455,7 @@ describe('ChekinSDKValidator', () => {
       it('should not validate null hiddenFormFields (falsy values are skipped)', () => {
         const config = {
           ...createValidConfig(),
-          hiddenFormFields: null as unknown as ChekinSDKConfig['hiddenFormFields'],
+          hiddenFormFields: null as unknown as ChekinHostSDKConfig['hiddenFormFields'],
         };
         const result = validator.validateConfig(config);
 
@@ -470,7 +470,7 @@ describe('ChekinSDKValidator', () => {
             unknownSection: ['field1'],
           },
         };
-        const result = validator.validateConfig(config as ChekinSDKConfig);
+        const result = validator.validateConfig(config as ChekinHostSDKConfig);
 
         expect(result.isValid).toBe(true);
         expect(result.warnings).toContainEqual(
@@ -576,7 +576,7 @@ describe('ChekinSDKValidator', () => {
         const config = {
           ...createValidConfig(),
           payServicesConfig:
-            'not-object' as unknown as ChekinSDKConfig['payServicesConfig'],
+            'not-object' as unknown as ChekinHostSDKConfig['payServicesConfig'],
         };
         const result = validator.validateConfig(config);
 
@@ -591,7 +591,7 @@ describe('ChekinSDKValidator', () => {
       it('should not validate null payServicesConfig (falsy values are skipped)', () => {
         const config = {
           ...createValidConfig(),
-          payServicesConfig: null as unknown as ChekinSDKConfig['payServicesConfig'],
+          payServicesConfig: null as unknown as ChekinHostSDKConfig['payServicesConfig'],
         };
         const result = validator.validateConfig(config);
 
@@ -835,7 +835,7 @@ describe('ChekinSDKValidator', () => {
 
   describe('edge cases', () => {
     it('should handle undefined optional fields gracefully', () => {
-      const config: ChekinSDKConfig = {
+      const config: ChekinHostSDKConfig = {
         apiKey: 'valid-api-key-12345',
         baseUrl: undefined,
         version: undefined,
@@ -864,7 +864,7 @@ describe('ChekinSDKValidator', () => {
     });
 
     it('should handle empty arrays and objects', () => {
-      const config: ChekinSDKConfig = {
+      const config: ChekinHostSDKConfig = {
         apiKey: 'valid-api-key-12345',
         features: [],
         hiddenSections: [],
@@ -878,7 +878,7 @@ describe('ChekinSDKValidator', () => {
     });
 
     it('should accumulate multiple errors and warnings', () => {
-      const config: ChekinSDKConfig = {
+      const config: ChekinHostSDKConfig = {
         apiKey: 123 as unknown as string, // error
         baseUrl: 'invalid-url', // error
         version: 'invalid', // warning

@@ -1,9 +1,9 @@
 import {describe, it, expect} from 'vitest';
 import {formatChekinUrl} from '../../utils/formatChekinUrl';
-import {ChekinSDKConfig} from '../../types';
+import {ChekinHostSDKConfig} from '../../types';
 
 describe('formatChekinUrl', () => {
-  const baseConfig: ChekinSDKConfig = {
+  const baseConfig: ChekinHostSDKConfig = {
     apiKey: 'test-api-key',
   };
 
@@ -71,7 +71,7 @@ describe('formatChekinUrl', () => {
 
   describe('Essential parameters', () => {
     it('should add all essential parameters to URL', () => {
-      const config: ChekinSDKConfig = {
+      const config: ChekinHostSDKConfig = {
         apiKey: 'test-key',
         features: ['IV', 'LIVENESS_DETECTION'],
         housingId: 'housing-123',
@@ -93,7 +93,7 @@ describe('formatChekinUrl', () => {
     });
 
     it('should skip undefined essential parameters', () => {
-      const config: ChekinSDKConfig = {
+      const config: ChekinHostSDKConfig = {
         apiKey: 'test-key',
         features: undefined,
         housingId: undefined,
@@ -107,7 +107,7 @@ describe('formatChekinUrl', () => {
     });
 
     it('should handle empty arrays by not adding parameter', () => {
-      const config: ChekinSDKConfig = {
+      const config: ChekinHostSDKConfig = {
         apiKey: 'test-key',
         features: [],
       };
@@ -265,7 +265,7 @@ describe('formatChekinUrl', () => {
   describe('URL length limits', () => {
     it('should create minimal URL when exceeding safe limit', () => {
       const longValue = 'x'.repeat(2500);
-      const config: ChekinSDKConfig = {
+      const config: ChekinHostSDKConfig = {
         apiKey: 'test-key',
         housingId: 'housing-123',
         externalHousingId: 'ext-housing-456',
@@ -291,7 +291,7 @@ describe('formatChekinUrl', () => {
 
     it('should include housingId in minimal URL when available', () => {
       const longValue = 'x'.repeat(2500);
-      const config: ChekinSDKConfig = {
+      const config: ChekinHostSDKConfig = {
         apiKey: 'test-key',
         housingId: 'housing-123',
         features: [longValue],
@@ -306,7 +306,7 @@ describe('formatChekinUrl', () => {
 
     it('should include externalHousingId in minimal URL when available', () => {
       const longValue = 'x'.repeat(2500);
-      const config: ChekinSDKConfig = {
+      const config: ChekinHostSDKConfig = {
         apiKey: 'test-key',
         externalHousingId: 'ext-housing-456',
         features: [longValue],

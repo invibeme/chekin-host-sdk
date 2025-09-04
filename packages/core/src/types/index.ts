@@ -7,7 +7,7 @@ type ConnectionState =
   | 'CONNECTED'
   | 'DISCONNECTED';
 
-export interface ChekinSDKConfig {
+export interface ChekinHostSDKConfig {
   apiKey: string;
   baseUrl?: string;
   version?: string;
