@@ -1,6 +1,6 @@
 {
   "name": "@chekinapp/host-sdk",
-  "version": "1.0.1",
+  "version": "1.0.2",
   "description": "Framework-agnostic Chekin SDK for host management",
   "author": "vlad-svr",
   "license": "MIT",
