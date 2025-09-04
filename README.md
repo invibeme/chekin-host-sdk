@@ -43,6 +43,8 @@ sdk.render('chekin-container').then(() => {
 
 #### React
 
+> **Note**: React components are currently in development and not yet available on npm.
+
 ```jsx
 import {ChekinHostSDKView} from 'chekin-host-sdk-react';
 
@@ -152,6 +154,8 @@ sdk.on('ready', () => {
 ```
 
 ## React Components
+
+> **Note**: React components and hooks are currently in development and not yet available on npm. Use the vanilla JS SDK for now.
 
 ### ChekinHostSDKView
 
