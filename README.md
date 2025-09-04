@@ -2,6 +2,8 @@
 
 A modern, framework-agnostic SDK for integrating Chekin's host management platform into your applications. Built with TypeScript and designed for security, performance, and developer experience.
 
+> **Migrating from ChekinHousingsSDK?** See the [Migration Guide](./MIGRATION_GUIDE.md) for step-by-step instructions.
+
 ## Features
 
 - 🚀 **Framework Agnostic** - Works with vanilla JavaScript, React, Vue, Angular, and more
@@ -21,7 +23,7 @@ A modern, framework-agnostic SDK for integrating Chekin's host management platfo
 npm install chekin-host-sdk
 
 # For React applications (In development and not available on npm yet)
-npm install chekin-host-sdk-react
+# npm install chekin-host-sdk-react
 ```
 
 ### Basic Usage
@@ -33,7 +35,7 @@ import {ChekinHostSDK} from 'chekin-host-sdk';
 
 const sdk = new ChekinHostSDK({
   apiKey: 'your-api-key',
-  features: ['IV', 'LIVENESS_DETECTION'],
+  housingId: 'reservation-123',
 });
 
 sdk.render('chekin-container').then(() => {
@@ -79,7 +81,7 @@ function MyComponent() {
 This repository contains multiple packages:
 
 - **[`chekin-host-sdk`](./packages/core/README.md)** - Core framework-agnostic SDK
-- **[`chekin-host-sdk-react`](./packages/react/README.md)** - React components and hooks
+- **[`chekin-host-sdk-react`](./packages/react/README.md)** - React components and hooks (IN DEVELOPMENT)
 - **`apps/host-sdk`** - Iframe application (deployed to CDN)
 
 ## Architecture
@@ -112,8 +114,8 @@ For a complete list of all configuration parameters with detailed descriptions, 
 {
   apiKey: 'your-api-key',          // Required: Your Chekin API key
   features: ['IV'],                // Optional: Enabled features
+  mode: 'ALL',                // Optional: Enabled features
   housingId: 'housing-123',        // Optional: Pre-select housing
-  reservationId: 'res-456',        // Optional: Pre-load reservation
   defaultLanguage: 'en'            // Optional: Default language
 }
 ```
@@ -122,22 +124,37 @@ For a complete list of all configuration parameters with detailed descriptions, 
 
 ```javascript
 {
-  version: '1.6.2',                // Pin to specific version
-  baseUrl: 'https://custom.com/',  // Custom hosting URL
+  version: '1.6.2',                // Pin to specific version of the SDK (default: latest)
+  baseUrl: 'https://custom.com/',  // Custom hosting URL of the iframe app
   styles: 'body { font-family: Arial, sans-serif; } .primary-color { color: #007cba; }',  // Custom CSS styles as string
   stylesLink: 'https://yoursite.com/custom.css',  // External stylesheet
   autoHeight: true,                // Auto-adjust iframe height
-  enableLogging: false,            // Disable SDK logging (default)
+  enableLogging: false,            // Disable SDK logging (default). It is needed for debugging.
   hiddenSections: ['housing_police'],    // Hide specific sections
   hiddenFormFields: {              // Hide specific form fields
     housingInfo: ['field1', 'field2']
+  },
+  onHeightChanged: height => {
+    console.log('Height changed:', height);
+  },
+  onError: error => {
+    console.error('SDK Error:', error.message);
+  },
+  onConnectionError: error => {
+    console.error('Connection Error:', error);
+  },
+  onPoliceAccountConnection: data => {
+    console.log('Police account connected:', data);
+  },
+  onStatAccountConnection: data => {
+    console.log('Stat account connected:', data);
   }
 }
 ```
 
 ## Event Handling
 
-Listen to SDK events for better integration:
+Listen to SDK events for better integration (If you don't want to pass callbacks in config):
 
 ```javascript
 sdk.on('height-changed', height => {
@@ -278,6 +295,7 @@ npm run typecheck
 
 For detailed API documentation and examples:
 
+- **[Migration Guide](./MIGRATION_GUIDE.md)** - Step-by-step migration from ChekinHousingsSDK
 - **[Core SDK Documentation](./packages/core/README.md)** - Complete guide to the framework-agnostic SDK
 - **[React Documentation](./packages/react/README.md)** - React components, hooks, and examples
 - **[Project Architecture](./CLAUDE.md)** - Developer guide and architecture overview
@@ -304,5 +322,4 @@ MIT License - see [LICENSE](./LICENSE) file for details.
 ## Support
 
 - 📧 Email: support@chekin.com
-- 📖 Documentation: https://docs.chekin.com
-- 🐛 Issues: https://github.com/chekin/chekin-host-sdk/issues
+- 🐛 Issues: https://github.com/invibeme/chekin-host-sdk/issues

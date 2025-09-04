@@ -2,6 +2,8 @@
 
 The core framework-agnostic SDK package for integrating Chekin's host management platform into web applications through secure iframe embedding.
 
+> **Migrating from ChekinHousingsSDK?** See the [Migration Guide](../../MIGRATION_GUIDE.md) for step-by-step instructions.
+
 ## Overview
 
 This package provides the foundational `ChekinHostSDK` class that can be used in any JavaScript/TypeScript environment, regardless of framework. It handles iframe creation, secure communication via postMessage, configuration validation, and comprehensive logging.
@@ -352,4 +354,4 @@ The core package includes comprehensive tests for all functionality. Use the san
 
 ## Related Packages
 
-- **[chekin-host-sdk-react](../react/README.md)** - React components and hooks built on this core package
+- **[chekin-host-sdk-react](../react/README.md)** - React components and hooks built on this core package (IN DEVELOPMENT - not yet available on npm)

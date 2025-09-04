@@ -272,7 +272,6 @@ try {
 
 ## Need Help?
 
-- **Documentation**: Check the full API documentation
 - **GitHub Issues**: Report bugs or ask questions
 - **Support**: Contact the Chekin development team
 
