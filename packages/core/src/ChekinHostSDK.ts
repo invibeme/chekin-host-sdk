@@ -83,6 +83,14 @@ export class ChekinHostSDK {
     this.logger.logConfigUpdate(config);
   }
 
+  public initAndRender(
+    config: ChekinSDKConfig & {targetNode: string},
+  ): Promise<HTMLIFrameElement> {
+    const {targetNode, ...sdkConfig} = config;
+    this.initialize(sdkConfig);
+    return this.render(targetNode);
+  }
+
   // Framework-agnostic render method (similar to your renderApp)
   public render(container: string | HTMLElement): Promise<HTMLIFrameElement> {
     const containerId =
