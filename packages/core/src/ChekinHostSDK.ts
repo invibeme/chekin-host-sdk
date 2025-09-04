@@ -184,16 +184,15 @@ export class ChekinHostSDK {
         this.logger.logIframeError(error, this.iframe?.src);
         reject(error);
       };
-      console.log('fdfdsdfgdsadfgds');
       container.appendChild(this.iframe);
-      // this.observeContainerRemoval(container);
+      this.observeContainerRemoval(container);
     });
   }
 
   private observeContainerRemoval(container: HTMLElement): void {
     this.observer?.disconnect();
     this.observer = new MutationObserver(() => {
-      if (!document.getElementById(container.id)) {
+      if (!document.body.contains(container)) {
         this.destroy();
       }
     });
