@@ -259,7 +259,8 @@
                 <label for="sdkVersion">SDK App Version</label>
                 <select id="sdkVersion" name="sdkVersion" onchange="updateSDKUrl()">
                   <option value="latest" selected>Latest Production</option>
-                  <option value="custom">Custom Version</option>
+                  <option value="custom">Custom Production Version</option>
+                  <option value="dev">Development(STG)</option>
                 </select>
               </div>
               <div class="form-group">
@@ -728,7 +729,7 @@
         sdkVersion: 'latest',
         customVersion: '',
         baseUrl: '',
-        apiKey: '1082d95186767233dd02402093d8c0dfe32d549c1245da3abb0ea392c59d5139',
+        apiKey: 'f413e24edd8418e61c361090cf069bc8003dd8eecc395f647a6905ada4a0aa45',
         features: '',
         feature_iv: false,
         feature_liveness: false,
@@ -878,6 +879,10 @@
             customVersionInput.disabled = true;
             customVersionInput.value = '';
             break;
+          case 'dev':
+            customVersionInput.disabled = true;
+            customVersionInput.value = '';
+            break;
           case 'custom':
             customVersionInput.disabled = false;
             break;
@@ -987,6 +992,8 @@
         // Handle version
         if (data.sdkVersion === 'custom' && data.customVersion) {
           data.version = data.customVersion;
+        } else if (data.sdkVersion === 'dev') {
+          data.baseUrl = 'https://cdn.chekin.com/host-sdk/dev';
         }
         delete data.sdkVersion;
         delete data.customVersion;
