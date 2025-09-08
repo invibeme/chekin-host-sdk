@@ -1,112 +1,195 @@
 <!doctype html>
-<html lang="en">
+<html lang="en" prefix="og: http://ogp.me/ns#" translate="no">
   <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Chekin Core SDK Sandbox</title>
+    <meta name="google" content="notranslate" />
+    <meta charset="utf-8" />
+    <link rel="icon" href="/favicon-blue.ico" />
+    <link rel="apple-touch-icon" href="/logo192.svg" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="theme-color" content="#161643" />
+    <meta
+      name="description"
+      content="Combined Chekin SDK Sandbox - Test all configuration options"
+    />
+
+    <title>Combined Chekin SDK Sandbox</title>
+
     <style>
       body {
         font-family: Arial, sans-serif;
-        max-width: 1400px;
-        margin: 0 auto;
+        margin: 0;
         padding: 20px;
         background-color: #f5f5f5;
       }
       .container {
+        max-width: 1200px;
+        margin: 0 auto;
+      }
+      .controls {
         background: white;
         padding: 20px;
         border-radius: 8px;
-        box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
         margin-bottom: 20px;
-      }
-      .config-section {
-        display: grid;
-        grid-template-columns: 1fr 1fr;
-        gap: 20px;
-        margin-bottom: 20px;
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
       }
       .form-group {
         margin-bottom: 15px;
       }
-      label {
+      .form-group label {
         display: block;
         margin-bottom: 5px;
         font-weight: bold;
-        color: #333;
       }
-      input,
-      select,
-      textarea {
+      .form-group input,
+      .form-group select,
+      .form-group textarea {
         width: 100%;
-        padding: 8px 12px;
+        padding: 8px;
         border: 1px solid #ddd;
         border-radius: 4px;
         font-size: 14px;
-        box-sizing: border-box;
       }
-      textarea {
+      .form-group textarea {
         height: 80px;
         resize: vertical;
+      }
+      .checkbox-group {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+      }
+      .checkbox-group input[type='checkbox'] {
+        width: auto;
+        margin: 0;
+      }
+      .button-group {
+        display: flex;
+        gap: 10px;
+        margin-top: 20px;
       }
       button {
         padding: 10px 20px;
         border: none;
         border-radius: 4px;
-        background-color: #007cba;
-        color: white;
         cursor: pointer;
         font-size: 14px;
-        margin-right: 10px;
-        margin-bottom: 10px;
+        position: relative;
+        transition: opacity 0.2s ease;
       }
-      button:hover {
-        background-color: #005a8a;
+      .btn-primary {
+        background-color: #161643;
+        color: white;
+      }
+      .btn-secondary {
+        background-color: #6c757d;
+        color: white;
+      }
+      .btn-danger {
+        background-color: #dc3545;
+        color: white;
       }
       button:disabled {
-        background-color: #ccc;
+        opacity: 0.6;
         cursor: not-allowed;
       }
-      .controls {
-        display: flex;
-        flex-wrap: wrap;
-        gap: 10px;
-        margin-bottom: 20px;
+      .btn-loading {
+        opacity: 0.7;
       }
-      .status {
-        padding: 10px;
-        background-color: #e8f5e8;
-        border: 1px solid #4caf50;
+      .btn-loading::after {
+        content: '';
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        width: 16px;
+        height: 16px;
+        margin: -8px 0 0 -8px;
+        border: 2px solid transparent;
+        border-top: 2px solid currentColor;
+        border-radius: 50%;
+        animation: spin 1s linear infinite;
+      }
+      .btn-loading span {
+        opacity: 0;
+      }
+      @keyframes spin {
+        0% {
+          transform: rotate(0deg);
+        }
+        100% {
+          transform: rotate(360deg);
+        }
+      }
+      .tooltip {
+        position: relative;
+        display: inline-block;
+      }
+      .tooltip .tooltip-text {
+        visibility: hidden;
+        width: 240px;
+        background-color: #333;
+        color: #fff;
+        text-align: center;
+        border-radius: 6px;
+        padding: 8px 12px;
+        font-size: 12px;
+        line-height: 1.4;
+        position: absolute;
+        z-index: 1000;
+        bottom: 125%;
+        left: 50%;
+        margin-left: -120px;
+        opacity: 0;
+        transition: opacity 0.3s;
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+      }
+      .tooltip .tooltip-text::after {
+        content: '';
+        position: absolute;
+        top: 100%;
+        left: 50%;
+        margin-left: -5px;
+        border-width: 5px;
+        border-style: solid;
+        border-color: #333 transparent transparent transparent;
+      }
+      .tooltip:hover .tooltip-text {
+        visibility: visible;
+        opacity: 1;
+      }
+      .tooltip button:disabled + .tooltip-text {
+        background-color: #666;
+      }
+      .sdk-container {
+        background: white;
+        border-radius: 8px;
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        min-height: 400px;
+      }
+      .section {
+        margin-bottom: 20px;
+        padding: 15px;
+        border: 1px solid #e0e0e0;
         border-radius: 4px;
-        margin-bottom: 20px;
       }
-      .error {
-        background-color: #ffe8e8;
-        border-color: #f44336;
+      .section h3 {
+        margin-top: 0;
+        color: #161643;
+      }
+      .grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+        gap: 15px;
       }
       .logs {
-        background-color: #f8f8f8;
-        border: 1px solid #ddd;
+        background: #f8f9fa;
+        padding: 10px;
         border-radius: 4px;
-        padding: 15px;
         max-height: 200px;
         overflow-y: auto;
         font-family: monospace;
         font-size: 12px;
         white-space: pre-wrap;
-      }
-      #chekin-container {
-        width: 100%;
-        height: 600px;
-        border: 2px solid #ddd;
-        border-radius: 8px;
-        overflow: hidden;
-        background: white;
-
-        & > iframe {
-          width: 100%;
-          height: 500px;
-          border: none;
-        }
+        margin-top: 20px;
       }
       .url-preview {
         background-color: #f0f8ff;
@@ -118,377 +201,872 @@
         font-size: 12px;
         word-break: break-all;
       }
+      #chekin-container {
+        width: 100%;
+        height: 600px;
+        border: 2px solid #ddd;
+        border-radius: 8px;
+        overflow: hidden;
+        background: white;
+      }
+      #chekin-container > iframe {
+        width: 100%;
+        height: 500px;
+        border: none;
+      }
     </style>
   </head>
   <body>
     <div class="container">
-      <h1>Chekin Core SDK Sandbox</h1>
-      <p>Test the core SDK with configurable iframe source and parameters.</p>
-
-      <div class="config-section">
-        <div>
-          <div class="form-group">
-            <label for="base-url">Iframe Base URL:</label>
-            <input
-              type="text"
-              id="base-url"
-              placeholder="e.g., https://cdn.chekin.com/host-sdk/dev"
-            />
-          </div>
-
-          <div class="form-group">
-            <label for="api-key">API Key:</label>
-            <input
-              type="text"
-              id="api-key"
-              value="1082d95186767233dd02402093d8c0dfe32d549c1245da3abb0ea392c59d5139"
-              placeholder="Your API key"
-            />
-          </div>
-
-          <div class="form-group">
-            <label for="version">Version (optional):</label>
-            <input
-              type="text"
-              id="version"
-              placeholder="e.g., v1.2.3 or leave empty for latest"
-            />
-          </div>
-
-          <div class="form-group">
-            <label for="features">Features:</label>
-            <input
-              type="text"
-              id="features"
-              value="['IV', 'LIVENESS_DETECTION']"
-              placeholder="Comma-separated features"
-            />
-          </div>
-
-          <div class="form-group">
-            <label for="housing-id">Housing ID (optional):</label>
-            <input type="text" id="housing-id" placeholder="Housing identifier" />
-          </div>
-
-          <div class="form-group">
-            <label for="reservation-id">Reservation ID (optional):</label>
-            <input type="text" id="reservation-id" placeholder="Reservation identifier" />
-          </div>
-
-          <div class="form-group">
-            <label for="external-housing-id">External Housing ID (optional):</label>
-            <input
-              type="text"
-              id="external-housing-id"
-              placeholder="External housing identifier"
-            />
-          </div>
-
-          <div class="form-group">
-            <label for="default-language">Default Language (optional):</label>
-            <input type="text" id="default-language" placeholder="e.g., en, es, fr" />
-          </div>
-        </div>
-
-        <div>
-          <div class="form-group">
-            <label for="styles-link">Styles Link (optional):</label>
-            <input
-              type="text"
-              id="styles-link"
-              placeholder="https://example.com/styles.css"
-            />
-          </div>
-
-          <div class="form-group">
-            <label for="custom-styles">Custom Styles (optional):</label>
-            <textarea id="custom-styles" placeholder="CSS styles as string"></textarea>
-          </div>
-
-          <div class="form-group">
-            <label for="auto-height">Auto Height:</label>
-            <select id="auto-height">
-              <option value="true" selected>True</option>
-              <option value="false">False</option>
-            </select>
-          </div>
-
-          <div class="form-group">
-            <label for="log-level">Log Level:</label>
-            <select id="log-level">
-              <option value="debug">Debug</option>
-              <option value="info" selected>Info</option>
-              <option value="warn">Warn</option>
-              <option value="error">Error</option>
-            </select>
-          </div>
-        </div>
-      </div>
-
-      <!-- Advanced Configuration Section -->
-      <div class="container">
-        <h3>Advanced Configuration</h3>
-
-        <div class="config-section">
-          <div>
-            <div class="form-group">
-              <label for="hidden-form-fields">Hidden Form Fields (JSON):</label>
-              <textarea
-                id="hidden-form-fields"
-                placeholder='{"housingInfo": ["field1"], "housingPolice": ["field2"], "housingStat": ["field"], "guestbookGeneration": ["field"]}'
-              ></textarea>
-            </div>
-
-            <div class="form-group">
-              <label for="pay-services-config">Pay Services Config (JSON):</label>
-              <textarea
-                id="pay-services-config"
-                placeholder='{"currency": "USD", "liveness": {"price": 5}, "phoneValidation": {"price": 2}}'
-              >
-{
-currency: 'usd',
-liveness: {
-price: 333,
-},
-}</textarea
-              >
-            </div>
-            <div class="form-group">
-              <label for="hidden-sections">Hidden Sections (optional):</label>
-              <input
-                type="text"
-                id="hidden-sections"
-                placeholder="housing_police,housing_stat,housing_documents,identity_verification"
-              />
-            </div>
-          </div>
-
-          <div>
-            <div class="form-group">
-              <label for="enable-callbacks">Enable Event Callbacks:</label>
-              <select id="enable-callbacks">
-                <option value="true" selected>True</option>
-                <option value="false">False</option>
-              </select>
-            </div>
-          </div>
-        </div>
-      </div>
-
-      <div class="url-preview" id="url-preview">Generated URL will appear here...</div>
+      <h1>Combined Chekin SDK Sandbox</h1>
 
       <div class="controls">
-        <button id="init-btn">Initialize SDK</button>
-        <button id="destroy-btn" disabled>Destroy SDK</button>
-        <button id="nav-btn">Test Route Navigation</button>
-        <button id="clear-btn">Clear Logs</button>
+        <form id="sdkForm">
+          <!-- SDK Configuration -->
+          <div class="section">
+            <h3>SDK Configuration</h3>
+            <div class="grid">
+              <div class="form-group">
+                <label for="sdkSource">SDK Source</label>
+                <select id="sdkSource" name="sdkSource" onchange="updateSDKSource()">
+                  <option value="local" selected>Local Build (./dist/index.js)</option>
+                  <option value="npm">NPM Package (unpkg.com)</option>
+                </select>
+              </div>
+              <div class="form-group">
+                <label for="npmVersion">NPM Package Version</label>
+                <select
+                  id="npmVersion"
+                  name="npmVersion"
+                  onchange="updateSDKUrl()"
+                  disabled
+                >
+                  <option value="latest" selected>Latest</option>
+                  <option value="beta">Beta</option>
+                  <option value="custom">Custom Version</option>
+                </select>
+              </div>
+              <div class="form-group">
+                <label for="customNpmVersion">Custom NPM Version</label>
+                <input
+                  type="text"
+                  id="customNpmVersion"
+                  name="customNpmVersion"
+                  placeholder="e.g., 1.2.3"
+                  disabled
+                />
+              </div>
+              <div class="form-group">
+                <label for="sdkVersion">SDK App Version</label>
+                <select id="sdkVersion" name="sdkVersion" onchange="updateSDKUrl()">
+                  <option value="latest" selected>Latest Production</option>
+                  <option value="beta">Beta</option>
+                  <option value="custom">Custom Version</option>
+                </select>
+              </div>
+              <div class="form-group">
+                <label for="customVersion">Custom App Version</label>
+                <input
+                  type="text"
+                  id="customVersion"
+                  name="customVersion"
+                  placeholder="e.g., 1.2.3"
+                  disabled
+                />
+              </div>
+              <div class="form-group">
+                <label for="baseUrl">Base URL (optional)</label>
+                <input
+                  type="text"
+                  id="baseUrl"
+                  name="baseUrl"
+                  placeholder="https://cdn.chekin.com/host-sdk/dev"
+                />
+              </div>
+            </div>
+          </div>
+
+          <!-- Core Configuration -->
+          <div class="section">
+            <h3>Core Configuration</h3>
+            <div class="grid">
+              <div class="form-group">
+                <label for="apiKey">API Key *</label>
+                <input
+                  type="text"
+                  id="apiKey"
+                  name="apiKey"
+                  required
+                  value="1082d95186767233dd02402093d8c0dfe32d549c1245da3abb0ea392c59d5139"
+                  placeholder="Required API key"
+                />
+              </div>
+              <div class="form-group">
+                <label>Features</label>
+                <div
+                  style="
+                    display: flex;
+                    flex-direction: column;
+                    gap: 8px;
+                    margin-bottom: 10px;
+                  "
+                >
+                  <div class="checkbox-group">
+                    <input type="checkbox" id="feature_iv" name="feature_iv" />
+                    <label for="feature_iv">Identity Verification (IV)</label>
+                  </div>
+                  <div class="checkbox-group">
+                    <input
+                      type="checkbox"
+                      id="feature_liveness"
+                      name="feature_liveness"
+                    />
+                    <label for="feature_liveness">Liveness Detection</label>
+                  </div>
+                </div>
+                <label for="features">Additional Features (comma-separated)</label>
+                <input
+                  type="text"
+                  id="features"
+                  name="features"
+                  placeholder="Add other features manually"
+                />
+              </div>
+            </div>
+          </div>
+
+          <!-- Identification -->
+          <div class="section">
+            <h3>Identification</h3>
+            <div class="grid">
+              <div class="form-group">
+                <label for="reservationId">Reservation ID</label>
+                <input
+                  type="text"
+                  id="reservationId"
+                  name="reservationId"
+                  placeholder="Single reservation mode identifier"
+                />
+              </div>
+              <div class="form-group">
+                <label for="housingId">Housing ID</label>
+                <input
+                  type="text"
+                  id="housingId"
+                  name="housingId"
+                  placeholder="Single housing mode identifier"
+                />
+              </div>
+              <div class="form-group">
+                <label for="externalHousingId">External Housing ID</label>
+                <input
+                  type="text"
+                  id="externalHousingId"
+                  name="externalHousingId"
+                  placeholder="External housing identifier"
+                />
+              </div>
+            </div>
+          </div>
+
+          <!-- UI Configuration -->
+          <div class="section">
+            <h3>UI Configuration</h3>
+            <div class="grid">
+              <div class="form-group">
+                <label for="defaultLanguage">Default Language</label>
+                <select id="defaultLanguage" name="defaultLanguage">
+                  <option value="">Auto-detect</option>
+                  <option value="en">English</option>
+                  <option value="es">Spanish</option>
+                  <option value="fr">French</option>
+                  <option value="de">German</option>
+                  <option value="it">Italian</option>
+                  <option value="pt">Portuguese</option>
+                </select>
+              </div>
+              <div class="form-group">
+                <label for="stylesLink">Styles Link</label>
+                <input
+                  type="url"
+                  id="stylesLink"
+                  name="stylesLink"
+                  placeholder="URL to custom CSS file"
+                />
+              </div>
+              <div class="form-group">
+                <label for="styles">Custom Styles</label>
+                <textarea
+                  id="styles"
+                  name="styles"
+                  placeholder="Custom CSS styles"
+                ></textarea>
+              </div>
+            </div>
+          </div>
+
+          <!-- Hidden Fields & Sections -->
+          <div class="section">
+            <h3>Hidden Fields & Sections</h3>
+            <div class="grid">
+              <div class="form-group">
+                <label>Hidden Sections</label>
+                <div style="display: flex; flex-direction: column; gap: 8px">
+                  <div class="checkbox-group">
+                    <input
+                      type="checkbox"
+                      id="hidden_housing_police"
+                      name="hidden_housing_police"
+                    />
+                    <label for="hidden_housing_police">Housing Police</label>
+                  </div>
+                  <div class="checkbox-group">
+                    <input
+                      type="checkbox"
+                      id="hidden_housing_stat"
+                      name="hidden_housing_stat"
+                    />
+                    <label for="hidden_housing_stat">Housing Statistics</label>
+                  </div>
+                  <div class="checkbox-group">
+                    <input
+                      type="checkbox"
+                      id="hidden_housing_documents"
+                      name="hidden_housing_documents"
+                    />
+                    <label for="hidden_housing_documents">Housing Documents</label>
+                  </div>
+                  <div class="checkbox-group">
+                    <input
+                      type="checkbox"
+                      id="hidden_identity_verification"
+                      name="hidden_identity_verification"
+                    />
+                    <label for="hidden_identity_verification"
+                      >Identity Verification</label
+                    >
+                  </div>
+                </div>
+              </div>
+              <div class="form-group">
+                <label for="hiddenFormFields">Hidden Form Fields (JSON)</label>
+                <textarea
+                  id="hiddenFormFields"
+                  name="hiddenFormFields"
+                  placeholder='{"housingInfo": ["field1"], "housingPolice": ["field2"]}'
+                ></textarea>
+              </div>
+            </div>
+          </div>
+
+          <!-- Payment Services Configuration -->
+          <div class="section">
+            <h3>Payment Services Configuration</h3>
+            <div class="grid">
+              <div class="form-group">
+                <label for="payServicesConfig">Pay Services Config (JSON)</label>
+                <textarea
+                  id="payServicesConfig"
+                  name="payServicesConfig"
+                  placeholder='{"currency": "USD", "liveness": {"price": 5}}'
+                >
+{
+  "currency": "usd",
+  "liveness": {
+    "price": 333
+  }
+}</textarea
+                >
+              </div>
+            </div>
+          </div>
+
+          <!-- Behavior Configuration -->
+          <div class="section">
+            <h3>Behavior Configuration</h3>
+            <div class="grid">
+              <div class="form-group">
+                <div class="checkbox-group">
+                  <input type="checkbox" id="autoHeight" name="autoHeight" checked />
+                  <label for="autoHeight">Auto Height</label>
+                </div>
+              </div>
+              <div class="form-group">
+                <label for="logLevel">Log Level</label>
+                <select id="logLevel" name="logLevel">
+                  <option value="debug">Debug</option>
+                  <option value="info" selected>Info</option>
+                  <option value="warn">Warn</option>
+                  <option value="error">Error</option>
+                </select>
+              </div>
+            </div>
+          </div>
+
+          <!-- Event Callbacks Info -->
+          <div class="section">
+            <h3>Available Event Callbacks</h3>
+            <p>The following events will be logged when they occur:</p>
+            <ul>
+              <li><strong>onError</strong> - SDK errors</li>
+              <li><strong>onConnectionError</strong> - Connection errors</li>
+              <li>
+                <strong>onPoliceAccountConnection</strong> - Police account connection
+                events
+              </li>
+              <li>
+                <strong>onStatAccountConnection</strong> - Statistics account connection
+                events
+              </li>
+              <li>
+                <strong>onHeightChanged</strong> - Height changes (when autoHeight is
+                enabled)
+              </li>
+            </ul>
+          </div>
+
+          <div class="url-preview" id="url-preview">
+            Generated URL will appear here...
+          </div>
+
+          <div class="button-group">
+            <div class="tooltip">
+              <button
+                type="button"
+                class="btn-primary"
+                id="initializeSDKBtn"
+                onclick="initializeSDK()"
+              >
+                <span>Initialize SDK</span>
+              </button>
+              <span class="tooltip-text"
+                >Initialize the SDK with your configuration settings. Creates a new SDK
+                instance with the current form values.</span
+              >
+            </div>
+            <div class="tooltip">
+              <button
+                type="button"
+                class="btn-danger"
+                id="destroySDKBtn"
+                onclick="destroySDK()"
+                disabled
+              >
+                <span>Destroy SDK</span>
+              </button>
+              <span class="tooltip-text"
+                >Destroy the current SDK instance and clean up resources. Use this to stop
+                the current SDK session.</span
+              >
+            </div>
+            <div class="tooltip">
+              <button
+                type="button"
+                class="btn-secondary"
+                id="navBtn"
+                onclick="testRouteNavigation()"
+              >
+                <span>Test Route Navigation</span>
+              </button>
+              <span class="tooltip-text"
+                >Test route navigation by navigating to a random route. Requires SDK to be
+                initialized first.</span
+              >
+            </div>
+            <div class="tooltip">
+              <button
+                type="button"
+                class="btn-secondary"
+                id="clearLogsBtn"
+                onclick="clearLogs()"
+              >
+                <span>Clear Logs</span>
+              </button>
+              <span class="tooltip-text"
+                >Clear all log messages from the console below. Useful for cleaning up
+                output during testing.</span
+              >
+            </div>
+          </div>
+
+          <div
+            class="button-group"
+            style="margin-top: 10px; border-top: 1px solid #e0e0e0; padding-top: 15px"
+          >
+            <div class="tooltip">
+              <button
+                type="button"
+                class="btn-secondary"
+                id="saveConfigBtn"
+                onclick="saveConfiguration()"
+              >
+                <span>Save Configuration</span>
+              </button>
+              <span class="tooltip-text"
+                >Save the current form configuration to browser localStorage. Your
+                settings will be automatically restored when you reload the page.</span
+              >
+            </div>
+            <div class="tooltip">
+              <button
+                type="button"
+                class="btn-secondary"
+                id="loadConfigBtn"
+                onclick="loadConfiguration()"
+              >
+                <span>Load Configuration</span>
+              </button>
+              <span class="tooltip-text"
+                >Load a previously saved configuration from browser localStorage. This
+                will overwrite current form values with the saved settings.</span
+              >
+            </div>
+            <div class="tooltip">
+              <button
+                type="button"
+                class="btn-secondary"
+                id="resetConfigBtn"
+                onclick="resetConfiguration()"
+              >
+                <span>Reset to Defaults</span>
+              </button>
+              <span class="tooltip-text"
+                >Reset all form fields to their default values and clear any saved
+                configuration from localStorage. Useful for starting fresh.</span
+              >
+            </div>
+          </div>
+        </form>
       </div>
 
-      <div class="status" id="status">Ready to initialize SDK</div>
-    </div>
-
-    <div class="container">
-      <h2>SDK Container</h2>
-      <div id="chekin-container">
-        <p style="text-align: center; margin-top: 50px; color: #666">
-          Configure settings above and click "Initialize SDK" to load the iframe
-        </p>
+      <div class="container">
+        <h2>SDK Container</h2>
+        <div id="chekin-container">
+          <p style="text-align: center; margin-top: 50px; color: #666">
+            Configure settings above and click "Initialize SDK" to load the iframe
+          </p>
+        </div>
       </div>
+
+      <div class="logs" id="logs">Logs will appear here...</div>
     </div>
 
-    <div class="container">
-      <h2>Event Logs</h2>
-      <div class="logs" id="logs">Logs will appear here...\n</div>
-    </div>
-
+    <!-- Load Chekin SDK dynamically -->
     <script type="module">
-      import {
-        ChekinHostSDK,
-        formatChekinUrl,
-        ChekinLogger,
-        CHEKIN_EVENTS,
-      } from './dist/index.js';
-
+      // Dynamic SDK loading variables
+      let ChekinHostSDK, formatChekinUrl, ChekinLogger, CHEKIN_EVENTS;
       let sdk = null;
-      let logContainer = document.getElementById('logs');
-      let logger = new ChekinLogger({level: 'info'});
+      let logsContainer;
+      let logger;
+      let isLoading = false;
+      let sdkLoaded = false;
 
-      function log(message, type = 'info') {
-        const timestamp = new Date().toLocaleTimeString();
-        const logEntry = `[${timestamp}] ${type.toUpperCase()}: ${message}\n`;
-        logContainer.textContent += logEntry;
-        logContainer.scrollTop = logContainer.scrollHeight;
-        console.log(`[Chekin SDK] ${message}`);
+      const STORAGE_KEY = 'chekin_combined_sdk_sandbox_config';
+
+      // Button state management
+      function setButtonLoading(buttonId, loading = true) {
+        const button = document.getElementById(buttonId);
+        if (!button) return;
+
+        if (loading) {
+          button.classList.add('btn-loading');
+          button.disabled = true;
+        } else {
+          button.classList.remove('btn-loading');
+          button.disabled = false;
+        }
       }
 
-      function updateStatus(message, isError = false) {
-        const statusEl = document.getElementById('status');
-        statusEl.textContent = message;
-        statusEl.className = isError ? 'status error' : 'status';
+      function setAllButtonsDisabled(disabled = true) {
+        const buttons = document.querySelectorAll('button[id$="Btn"]');
+        buttons.forEach(button => {
+          if (disabled) {
+            button.disabled = true;
+          } else if (!button.classList.contains('btn-loading')) {
+            button.disabled = false;
+          }
+        });
+      }
+
+      function updateButtonStates() {
+        if (isLoading) return;
+
+        const initBtn = document.getElementById('initializeSDKBtn');
+        const destroyBtn = document.getElementById('destroySDKBtn');
+        const navBtn = document.getElementById('navBtn');
+
+        initBtn.disabled = false;
+        destroyBtn.disabled = !sdk;
+        navBtn.disabled = !sdk;
+
+        // Configuration buttons are always enabled
+        document.getElementById('saveConfigBtn').disabled = false;
+        document.getElementById('loadConfigBtn').disabled = false;
+        document.getElementById('resetConfigBtn').disabled = false;
+        document.getElementById('clearLogsBtn').disabled = false;
+      }
+
+      const defaultConfig = {
+        sdkSource: 'local',
+        npmVersion: 'latest',
+        customNpmVersion: '',
+        sdkVersion: 'latest',
+        customVersion: '',
+        baseUrl: '',
+        apiKey: '1082d95186767233dd02402093d8c0dfe32d549c1245da3abb0ea392c59d5139',
+        features: '',
+        feature_iv: false,
+        feature_liveness: false,
+        reservationId: '',
+        housingId: '',
+        externalHousingId: '',
+        defaultLanguage: '',
+        autoHeight: true,
+        stylesLink: '',
+        styles: '',
+        hidden_housing_police: false,
+        hidden_housing_stat: false,
+        hidden_housing_documents: false,
+        hidden_identity_verification: false,
+        hiddenFormFields: '',
+        payServicesConfig:
+          '{\n  "currency": "usd",\n  "liveness": {\n    "price": 333\n  }\n}',
+        logLevel: 'info',
+      };
+
+      function log(message, type = 'info') {
+        if (!logsContainer) logsContainer = document.getElementById('logs');
+        const timestamp = new Date().toLocaleTimeString();
+        const logEntry = `[${timestamp}] ${type.toUpperCase()}: ${message}\n`;
+        logsContainer.textContent += logEntry;
+        logsContainer.scrollTop = logsContainer.scrollHeight;
+        console.log(`[Combined Chekin SDK] ${message}`);
+      }
+
+      // SDK Loading Functions
+      function getNpmPackageVersion() {
+        const npmVersionSelect = document.getElementById('npmVersion');
+        const customNpmVersionInput = document.getElementById('customNpmVersion');
+        const selectedVersion = npmVersionSelect.value;
+
+        if (selectedVersion === 'custom' && customNpmVersionInput.value) {
+          return customNpmVersionInput.value;
+        } else if (selectedVersion === 'beta') {
+          return 'beta';
+        } else {
+          return 'latest';
+        }
+      }
+
+      async function loadSDK() {
+        try {
+          const sdkSource = document.getElementById('sdkSource').value;
+          let importUrl;
+
+          if (sdkSource === 'local') {
+            importUrl = './dist/index.js';
+          } else {
+            // NPM package
+            const version = getNpmPackageVersion();
+            importUrl = `https://unpkg.com/@chekinapp/host-sdk@${version}`;
+          }
+
+          log(`Loading SDK from: ${importUrl}`);
+
+          const module = await import(importUrl);
+          ChekinHostSDK = module.ChekinHostSDK;
+          formatChekinUrl = module.formatChekinUrl;
+          ChekinLogger = module.ChekinLogger;
+          CHEKIN_EVENTS = module.CHEKIN_EVENTS;
+
+          if (!ChekinLogger) {
+            // Create basic logger if not available
+            ChekinLogger = class {
+              constructor(options) {
+                this.level = options?.level || 'info';
+              }
+            };
+          }
+
+          logger = new ChekinLogger({level: 'info'});
+          sdkLoaded = true;
+          log(`SDK loaded successfully from ${sdkSource} source`);
+        } catch (error) {
+          log(`Failed to load SDK: ${error.message}`, 'error');
+          throw error;
+        }
+      }
+
+      window.updateSDKSource = function () {
+        const sdkSourceSelect = document.getElementById('sdkSource');
+        const npmVersionSelect = document.getElementById('npmVersion');
+        const customNpmVersionInput = document.getElementById('customNpmVersion');
+        const selectedSource = sdkSourceSelect.value;
+
+        if (selectedSource === 'npm') {
+          npmVersionSelect.disabled = false;
+          updateNpmVersionFields();
+        } else {
+          npmVersionSelect.disabled = true;
+          customNpmVersionInput.disabled = true;
+        }
+
+        // Reset SDK loaded state when source changes
+        sdkLoaded = false;
+        updateUrlPreview();
+      };
+
+      function updateNpmVersionFields() {
+        const npmVersionSelect = document.getElementById('npmVersion');
+        const customNpmVersionInput = document.getElementById('customNpmVersion');
+        const selectedVersion = npmVersionSelect.value;
+
+        if (selectedVersion === 'custom') {
+          customNpmVersionInput.disabled = false;
+        } else {
+          customNpmVersionInput.disabled = true;
+          customNpmVersionInput.value = '';
+        }
       }
 
       function updateUrlPreview() {
-        const baseUrl = document.getElementById('base-url').value;
-        const apiKey = document.getElementById('api-key').value;
-        const version = document.getElementById('version').value;
-        const features = document.getElementById('features').value;
-
         try {
-          const config = {
-            apiKey,
-            baseUrl,
-            version: version || undefined,
-            features: features ? features.split(',').map(f => f.trim()) : [],
-          };
-
-          const urlResult = formatChekinUrl(config);
-          document.getElementById('url-preview').textContent = urlResult.url;
+          const config = getFormData();
+          if (config.apiKey && formatChekinUrl) {
+            const urlResult = formatChekinUrl({
+              apiKey: config.apiKey,
+              baseUrl: config.baseUrl,
+              version: config.version,
+              features: config.features || [],
+            });
+            document.getElementById('url-preview').textContent = urlResult.url;
+          } else if (!config.apiKey) {
+            document.getElementById('url-preview').textContent =
+              'API Key required for URL preview';
+          } else {
+            document.getElementById('url-preview').textContent =
+              'SDK not loaded yet - URL preview will be available after loading';
+          }
         } catch (error) {
           document.getElementById('url-preview').textContent = `Error: ${error.message}`;
         }
       }
 
-      // Update URL preview when inputs change
-      ['base-url', 'api-key', 'version', 'features'].forEach(id => {
-        document.getElementById(id).addEventListener('input', updateUrlPreview);
-      });
+      function updateSDKUrl() {
+        const versionSelect = document.getElementById('sdkVersion');
+        const customVersionInput = document.getElementById('customVersion');
+        const selectedVersion = versionSelect.value;
 
-      // Initialize URL preview
-      updateUrlPreview();
+        switch (selectedVersion) {
+          case 'latest':
+            customVersionInput.disabled = true;
+            customVersionInput.value = '';
+            break;
+          case 'beta':
+            customVersionInput.disabled = true;
+            customVersionInput.value = '';
+            break;
+          case 'custom':
+            customVersionInput.disabled = false;
+            break;
+          default:
+            customVersionInput.disabled = true;
+            customVersionInput.value = '';
+        }
 
-      async function initializeSDK() {
+        updateUrlPreview();
+      }
+
+      function getFormData() {
+        const form = document.getElementById('sdkForm');
+        const formData = new FormData(form);
+        const data = {};
+
+        // Get all form values
+        for (let [key, value] of formData.entries()) {
+          if (value !== '') {
+            data[key] = value;
+          }
+        }
+
+        // Handle checkboxes
+        const checkboxes = ['autoHeight'];
+        checkboxes.forEach(name => {
+          data[name] = document.getElementById(name).checked;
+        });
+
+        // Handle features array - combine checkboxes and text input
+        const featuresArray = [];
+
+        // Add features from checkboxes
+        const featureCheckboxes = {
+          feature_iv: 'IV',
+          feature_liveness: 'LIVENESS_DETECTION',
+        };
+
+        Object.keys(featureCheckboxes).forEach(checkboxId => {
+          if (document.getElementById(checkboxId).checked) {
+            featuresArray.push(featureCheckboxes[checkboxId]);
+          }
+        });
+
+        // Add features from text input
+        if (data.features) {
+          const textFeatures = data.features
+            .split(',')
+            .map(f => f.trim())
+            .filter(f => f);
+          featuresArray.push(...textFeatures);
+        }
+
+        // Remove duplicates and set the features array
+        if (featuresArray.length > 0) {
+          data.features = [...new Set(featuresArray)];
+        } else {
+          delete data.features;
+        }
+
+        // Handle hidden sections array
+        const hiddenSectionsArray = [];
+        const hiddenSectionCheckboxes = {
+          hidden_housing_police: 'housing_police',
+          hidden_housing_stat: 'housing_stat',
+          hidden_housing_documents: 'housing_documents',
+          hidden_identity_verification: 'identity_verification',
+        };
+
+        Object.keys(hiddenSectionCheckboxes).forEach(checkboxId => {
+          if (document.getElementById(checkboxId).checked) {
+            hiddenSectionsArray.push(hiddenSectionCheckboxes[checkboxId]);
+          }
+        });
+
+        if (hiddenSectionsArray.length > 0) {
+          data.hiddenSections = hiddenSectionsArray;
+        }
+
+        // Handle JSON configurations
+        if (data.hiddenFormFields) {
+          try {
+            data.hiddenFormFields = JSON.parse(data.hiddenFormFields);
+          } catch (e) {
+            try {
+              data.hiddenFormFields = new Function('return ' + data.hiddenFormFields)();
+            } catch (e2) {
+              log(`Invalid format in hiddenFormFields: ${e2.message}`, 'warn');
+              delete data.hiddenFormFields;
+            }
+          }
+        }
+
+        if (data.payServicesConfig) {
+          try {
+            data.payServicesConfig = JSON.parse(data.payServicesConfig);
+          } catch (e) {
+            try {
+              data.payServicesConfig = new Function('return ' + data.payServicesConfig)();
+            } catch (e2) {
+              log(`Invalid format in payServicesConfig: ${e2.message}`, 'warn');
+              delete data.payServicesConfig;
+            }
+          }
+        }
+
+        // Handle version
+        if (data.sdkVersion === 'custom' && data.customVersion) {
+          data.version = data.customVersion;
+        } else if (data.sdkVersion === 'beta') {
+          data.version = 'beta';
+        }
+        delete data.sdkVersion;
+        delete data.customVersion;
+
+        return data;
+      }
+
+      // Global functions
+      window.initializeSDK = async function () {
         try {
-          const baseUrl = document.getElementById('base-url').value;
-          const apiKey = document.getElementById('api-key').value;
-          const version = document.getElementById('version').value;
-          const features = document.getElementById('features').value;
-          const stylesLink = document.getElementById('styles-link').value;
-          const customStyles = document.getElementById('custom-styles').value;
-          const hiddenSections = document.getElementById('hidden-sections').value;
-          const logLevel = document.getElementById('log-level').value;
-          const housingId = document.getElementById('housing-id').value;
-          const reservationId = document.getElementById('reservation-id').value;
-          const externalHousingId = document.getElementById('external-housing-id').value;
-          const defaultLanguage = document.getElementById('default-language').value;
-          const autoHeight = document.getElementById('auto-height').value === 'true';
-          const hiddenFormFields = document.getElementById('hidden-form-fields').value;
-          const payServicesConfig = document.getElementById('pay-services-config').value;
-          const enableCallbacks =
-            document.getElementById('enable-callbacks').value === 'true';
+          setButtonLoading('initializeSDKBtn');
+          isLoading = true;
+          setAllButtonsDisabled();
 
-          if (!apiKey) {
-            throw new Error('Base URL and API Key are required');
+          const config = getFormData();
+
+          if (!config.apiKey) {
+            throw new Error('API Key is required');
+          }
+
+          // Load SDK if not already loaded or if source changed
+          if (!sdkLoaded || !ChekinHostSDK) {
+            await loadSDK();
           }
 
           log('Initializing Chekin SDK...');
-          updateStatus('Initializing SDK...');
 
           // Update logger level
-          logger = new ChekinLogger({level: logLevel});
+          logger = new ChekinLogger({level: config.logLevel || 'info'});
 
-          // Create SDK configuration
-          const config = {
-            apiKey,
-            baseUrl,
-            autoHeight,
-            version: version || undefined,
-            features: features ? features.split(',').map(f => f.trim()) : [],
-            stylesLink: stylesLink || undefined,
-            styles: customStyles || undefined,
-            hiddenSections: hiddenSections
-              ? hiddenSections.split(',').map(s => s.trim())
-              : [],
-            logLevel,
-            housingId: housingId || undefined,
-            reservationId: reservationId || undefined,
-            externalHousingId: externalHousingId || undefined,
-            defaultLanguage: defaultLanguage || undefined,
-          };
-
-          // Parse and add complex JSON configs
-          if (hiddenFormFields) {
-            try {
-              config.hiddenFormFields = JSON.parse(hiddenFormFields);
-            } catch (e) {
-              try {
-                config.hiddenFormFields = new Function('return ' + hiddenFormFields)();
-              } catch (e2) {
-                log(`Invalid format in hiddenFormFields: ${e2.message}`, 'warn');
-              }
-            }
-          }
-
-          if (payServicesConfig) {
-            try {
-              config.payServicesConfig = JSON.parse(payServicesConfig);
-            } catch (e) {
-              try {
-                config.payServicesConfig = new Function('return ' + payServicesConfig)();
-              } catch (e2) {
-                log(`Invalid format in payServicesConfig: ${e2.message}`, 'warn');
-              }
-            }
-          }
-
-          // Add event callbacks if enabled
-          if (enableCallbacks) {
-            config.onError = error => log(`Callback - Error: ${error}`, 'error');
-            config.onHeightChanged = height =>
-              log(`Callback - Height changed: ${height}px`);
-            config.onConnectionError = error =>
-              log(`Callback - Connection error: ${error}`, 'error');
-            config.onPoliceAccountConnection = data =>
-              log(`Callback - Police account: ${JSON.stringify(data)}`);
-            config.onStatAccountConnection = data =>
-              log(`Callback - Stat account: ${JSON.stringify(data)}`);
-          }
+          // Add event callbacks
+          config.onError = error => log(`Callback - Error: ${error}`, 'error');
+          config.onHeightChanged = height =>
+            log(`Callback - Height changed: ${height}px`);
+          config.onConnectionError = error =>
+            log(`Callback - Connection error: ${error}`, 'error');
+          config.onPoliceAccountConnection = data =>
+            log(`Callback - Police account: ${JSON.stringify(data)}`);
+          config.onStatAccountConnection = data =>
+            log(`Callback - Stat account: ${JSON.stringify(data)}`);
 
           // Initialize the actual SDK
           sdk = new ChekinHostSDK(config);
 
           // Set up event listeners for all SDK events
-          Object.values(CHEKIN_EVENTS).forEach(eventType => {
-            sdk.on(eventType, data => {
-              switch (eventType) {
-                case CHEKIN_EVENTS.HEIGHT_CHANGED:
-                  log(`Height changed to: ${data.height}px`);
-                  break;
-                case CHEKIN_EVENTS.ROUTE_CHANGED:
-                  log(`Route changed to: ${data.route}`);
-                  break;
-                case CHEKIN_EVENTS.ERROR:
-                  log(`Error: ${data.message}`, 'error');
-                  break;
-                default:
-                  log(`Event ${eventType}: ${JSON.stringify(data)}`, 'debug');
-              }
+          if (CHEKIN_EVENTS && Object.values) {
+            Object.values(CHEKIN_EVENTS).forEach(eventType => {
+              sdk.on(eventType, data => {
+                switch (eventType) {
+                  case CHEKIN_EVENTS.HEIGHT_CHANGED:
+                    log(`Height changed to: ${data.height}px`);
+                    break;
+                  case CHEKIN_EVENTS.ROUTE_CHANGED:
+                    log(`Route changed to: ${data.route}`);
+                    break;
+                  case CHEKIN_EVENTS.ERROR:
+                    log(`Error: ${data.message}`, 'error');
+                    break;
+                  default:
+                    log(`Event ${eventType}: ${JSON.stringify(data)}`, 'debug');
+                }
+              });
             });
-          });
+          }
 
           // Render the SDK
           await sdk.render('chekin-container');
 
-          log(`SDK initialized successfully with base URL: ${baseUrl}`);
-          updateStatus('SDK initialized successfully');
-
-          document.getElementById('destroy-btn').disabled = false;
+          log(
+            `SDK initialized successfully with API key: ${config.apiKey.substring(0, 8)}...`,
+          );
         } catch (error) {
           log(`Failed to initialize SDK: ${error.message}`, 'error');
-          updateStatus(`Error: ${error.message}`, true);
+        } finally {
+          isLoading = false;
+          setButtonLoading('initializeSDKBtn', false);
+          updateButtonStates();
         }
-      }
+      };
 
-      function destroySDK() {
+      window.destroySDK = function () {
         if (sdk) {
           sdk.destroy();
           sdk = null;
-          document.getElementById('destroy-btn').disabled = true;
-          updateStatus('SDK destroyed');
+          updateButtonStates();
           log('SDK destroyed');
         }
-      }
+      };
 
-      function testRouteNavigation() {
+      window.testRouteNavigation = function () {
         if (!sdk) {
           log('SDK not initialized', 'warn');
           return;
@@ -498,17 +1076,158 @@ price: 333,
         const randomRoute = routes[Math.floor(Math.random() * routes.length)];
         sdk.navigateToRoute(randomRoute);
         log(`Navigation requested to: ${randomRoute}`);
+      };
+
+      window.clearLogs = function () {
+        if (!logsContainer) logsContainer = document.getElementById('logs');
+        logsContainer.textContent = 'Logs cleared...\n';
+      };
+
+      window.saveConfiguration = function () {
+        try {
+          const config = {};
+          const form = document.getElementById('sdkForm');
+          const formData = new FormData(form);
+
+          // Get all form values
+          for (let [key, value] of formData.entries()) {
+            config[key] = value;
+          }
+
+          // Handle checkboxes
+          const checkboxes = [
+            'autoHeight',
+            'feature_iv',
+            'feature_liveness',
+            'hidden_housing_police',
+            'hidden_housing_stat',
+            'hidden_housing_documents',
+            'hidden_identity_verification',
+          ];
+          checkboxes.forEach(name => {
+            config[name] = document.getElementById(name).checked;
+          });
+
+          // Save to localStorage
+          localStorage.setItem(STORAGE_KEY, JSON.stringify(config));
+          log('Configuration saved to localStorage');
+        } catch (error) {
+          log('Failed to save configuration:', error.message);
+        }
+      };
+
+      window.loadConfiguration = function () {
+        try {
+          const savedConfig = localStorage.getItem(STORAGE_KEY);
+          if (!savedConfig) {
+            log('No saved configuration found');
+            return;
+          }
+
+          const config = JSON.parse(savedConfig);
+          populateForm(config);
+          updateSDKUrl();
+          updateUrlPreview();
+          log('Configuration loaded from localStorage');
+        } catch (error) {
+          log('Failed to load configuration:', error.message);
+        }
+      };
+
+      window.resetConfiguration = function () {
+        try {
+          populateForm(defaultConfig);
+          updateSDKUrl();
+          updateUrlPreview();
+          localStorage.removeItem(STORAGE_KEY);
+          log('Configuration reset to defaults');
+        } catch (error) {
+          log('Failed to reset configuration:', error.message);
+        }
+      };
+
+      function populateForm(config) {
+        Object.keys(config).forEach(key => {
+          const element = document.getElementById(key);
+          if (element) {
+            if (element.type === 'checkbox') {
+              element.checked = config[key];
+            } else {
+              element.value = config[key];
+            }
+          }
+        });
       }
 
-      function clearLogs() {
-        logContainer.textContent = 'Logs cleared...\n';
+      function autoSaveConfiguration() {
+        const form = document.getElementById('sdkForm');
+        const inputs = form.querySelectorAll('input, select, textarea');
+
+        inputs.forEach(input => {
+          input.addEventListener('change', () => {
+            setTimeout(() => {
+              saveConfiguration();
+              updateUrlPreview();
+            }, 100);
+          });
+        });
       }
 
-      // Set up event listeners for buttons
-      document.getElementById('init-btn').addEventListener('click', initializeSDK);
-      document.getElementById('destroy-btn').addEventListener('click', destroySDK);
-      document.getElementById('nav-btn').addEventListener('click', testRouteNavigation);
-      document.getElementById('clear-btn').addEventListener('click', clearLogs);
+      // Initialize on DOM load
+      document.addEventListener('DOMContentLoaded', () => {
+        logsContainer = document.getElementById('logs');
+
+        // Load saved configuration or defaults
+        const savedConfig = localStorage.getItem(STORAGE_KEY);
+        if (savedConfig) {
+          try {
+            const config = JSON.parse(savedConfig);
+            populateForm(config);
+            updateSDKUrl();
+            updateUrlPreview();
+            log('Combined SDK Sandbox loaded. Configuration restored from localStorage.');
+          } catch (error) {
+            log('Failed to load saved configuration, using defaults:', error.message);
+            populateForm(defaultConfig);
+            updateSDKUrl();
+            updateUrlPreview();
+          }
+        } else {
+          populateForm(defaultConfig);
+          updateSDKSource();
+          updateSDKUrl();
+          updateUrlPreview();
+          log('Combined SDK Sandbox loaded with default configuration.');
+        }
+
+        // Add event listeners
+        const customVersionInput = document.getElementById('customVersion');
+        customVersionInput.addEventListener('input', () => {
+          updateSDKUrl();
+          updateUrlPreview();
+        });
+
+        const customNpmVersionInput = document.getElementById('customNpmVersion');
+        customNpmVersionInput.addEventListener('input', () => {
+          sdkLoaded = false; // Force reload when custom NPM version changes
+          updateUrlPreview();
+        });
+
+        const npmVersionSelect = document.getElementById('npmVersion');
+        npmVersionSelect.addEventListener('change', () => {
+          updateNpmVersionFields();
+          sdkLoaded = false; // Force reload when NPM version changes
+          updateUrlPreview();
+        });
+
+        // Setup auto-save
+        autoSaveConfiguration();
+
+        // Initialize button states
+        updateButtonStates();
+
+        log('Configure settings and click "Initialize SDK" to begin.');
+      });
     </script>
   </body>
 </html>
