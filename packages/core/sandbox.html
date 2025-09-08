@@ -9,10 +9,10 @@
     <meta name="theme-color" content="#161643" />
     <meta
       name="description"
-      content="Combined Chekin SDK Sandbox - Test all configuration options"
+      content="Chekin Host SDK Sandbox - Test all configuration options"
     />
 
-    <title>Combined Chekin SDK Sandbox</title>
+    <title>Chekin Host SDK Sandbox</title>
 
     <style>
       body {
@@ -218,7 +218,7 @@
   </head>
   <body>
     <div class="container">
-      <h1>Combined Chekin SDK Sandbox</h1>
+      <h1>Chekin Host SDK Sandbox</h1>
 
       <div class="controls">
         <form id="sdkForm">
@@ -229,8 +229,8 @@
               <div class="form-group">
                 <label for="sdkSource">SDK Source</label>
                 <select id="sdkSource" name="sdkSource" onchange="updateSDKSource()">
-                  <option value="local" selected>Local Build (./dist/index.js)</option>
-                  <option value="npm">NPM Package (unpkg.com)</option>
+                  <option value="npm" selected>NPM Package (unpkg.com)</option>
+                  <option value="local">Local Build (./dist/index.js)</option>
                 </select>
               </div>
               <div class="form-group">
@@ -242,7 +242,6 @@
                   disabled
                 >
                   <option value="latest" selected>Latest</option>
-                  <option value="beta">Beta</option>
                   <option value="custom">Custom Version</option>
                 </select>
               </div>
@@ -260,7 +259,6 @@
                 <label for="sdkVersion">SDK App Version</label>
                 <select id="sdkVersion" name="sdkVersion" onchange="updateSDKUrl()">
                   <option value="latest" selected>Latest Production</option>
-                  <option value="beta">Beta</option>
                   <option value="custom">Custom Version</option>
                 </select>
               </div>
@@ -492,6 +490,18 @@
                 </div>
               </div>
               <div class="form-group">
+                <div class="checkbox-group">
+                  <input type="checkbox" id="routeSync" name="routeSync" checked />
+                  <label for="routeSync">Route Synchronization</label>
+                </div>
+              </div>
+              <div class="form-group">
+                <div class="checkbox-group">
+                  <input type="checkbox" id="enableLogging" name="enableLogging" />
+                  <label for="enableLogging">Enable Logging</label>
+                </div>
+              </div>
+              <div class="form-group">
                 <label for="logLevel">Log Level</label>
                 <select id="logLevel" name="logLevel">
                   <option value="debug">Debug</option>
@@ -522,6 +532,11 @@
                 <strong>onHeightChanged</strong> - Height changes (when autoHeight is
                 enabled)
               </li>
+              <li>
+                <strong>HANDSHAKE</strong> - Initial handshake between SDK and iframe
+              </li>
+              <li><strong>INIT_ROUTE</strong> - Initial route synchronization on load</li>
+              <li><strong>ROUTE_CHANGED</strong> - Route changes within iframe</li>
             </ul>
           </div>
 
@@ -654,14 +669,14 @@
     <!-- Load Chekin SDK dynamically -->
     <script type="module">
       // Dynamic SDK loading variables
-      let ChekinHostSDK, formatChekinUrl, ChekinLogger, CHEKIN_EVENTS;
+      let ChekinHostSDK, formatChekinUrl, ChekinLogger, CHEKIN_EVENTS, ChekinSDKValidator;
       let sdk = null;
       let logsContainer;
       let logger;
       let isLoading = false;
       let sdkLoaded = false;
 
-      const STORAGE_KEY = 'chekin_combined_sdk_sandbox_config';
+      const STORAGE_KEY = 'chekin_host_sdk_sandbox_config';
 
       // Button state management
       function setButtonLoading(buttonId, loading = true) {
@@ -707,7 +722,7 @@
       }
 
       const defaultConfig = {
-        sdkSource: 'local',
+        sdkSource: 'npm',
         npmVersion: 'latest',
         customNpmVersion: '',
         sdkVersion: 'latest',
@@ -722,6 +737,8 @@
         externalHousingId: '',
         defaultLanguage: '',
         autoHeight: true,
+        routeSync: true,
+        enableLogging: false,
         stylesLink: '',
         styles: '',
         hidden_housing_police: false,
@@ -740,7 +757,7 @@
         const logEntry = `[${timestamp}] ${type.toUpperCase()}: ${message}\n`;
         logsContainer.textContent += logEntry;
         logsContainer.scrollTop = logsContainer.scrollHeight;
-        console.log(`[Combined Chekin SDK] ${message}`);
+        console.log(`[Chekin Host SDK] ${message}`);
       }
 
       // SDK Loading Functions
@@ -751,8 +768,6 @@
 
         if (selectedVersion === 'custom' && customNpmVersionInput.value) {
           return customNpmVersionInput.value;
-        } else if (selectedVersion === 'beta') {
-          return 'beta';
         } else {
           return 'latest';
         }
@@ -778,6 +793,7 @@
           formatChekinUrl = module.formatChekinUrl;
           ChekinLogger = module.ChekinLogger;
           CHEKIN_EVENTS = module.CHEKIN_EVENTS;
+          ChekinSDKValidator = module.ChekinSDKValidator;
 
           if (!ChekinLogger) {
             // Create basic logger if not available
@@ -862,10 +878,6 @@
             customVersionInput.disabled = true;
             customVersionInput.value = '';
             break;
-          case 'beta':
-            customVersionInput.disabled = true;
-            customVersionInput.value = '';
-            break;
           case 'custom':
             customVersionInput.disabled = false;
             break;
@@ -890,7 +902,7 @@
         }
 
         // Handle checkboxes
-        const checkboxes = ['autoHeight'];
+        const checkboxes = ['autoHeight', 'routeSync', 'enableLogging'];
         checkboxes.forEach(name => {
           data[name] = document.getElementById(name).checked;
         });
@@ -975,8 +987,6 @@
         // Handle version
         if (data.sdkVersion === 'custom' && data.customVersion) {
           data.version = data.customVersion;
-        } else if (data.sdkVersion === 'beta') {
-          data.version = 'beta';
         }
         delete data.sdkVersion;
         delete data.customVersion;
@@ -1027,13 +1037,28 @@
               sdk.on(eventType, data => {
                 switch (eventType) {
                   case CHEKIN_EVENTS.HEIGHT_CHANGED:
-                    log(`Height changed to: ${data.height}px`);
+                    log(`Height changed to: ${data.height || data}px`);
                     break;
                   case CHEKIN_EVENTS.ROUTE_CHANGED:
-                    log(`Route changed to: ${data.route}`);
+                    log(`Route changed to: ${data.route || data.hash || data}`);
+                    break;
+                  case CHEKIN_EVENTS.INIT_ROUTE:
+                    log(`Initial route set to: ${data.route || data}`);
+                    break;
+                  case CHEKIN_EVENTS.HANDSHAKE:
+                    log(`Handshake received: ${JSON.stringify(data)}`);
                     break;
                   case CHEKIN_EVENTS.ERROR:
-                    log(`Error: ${data.message}`, 'error');
+                    log(`Error: ${data.message || data}`, 'error');
+                    break;
+                  case CHEKIN_EVENTS.CONNECTION_ERROR:
+                    log(`Connection error: ${JSON.stringify(data)}`, 'error');
+                    break;
+                  case CHEKIN_EVENTS.POLICE_ACCOUNT_CONNECTION:
+                    log(`Police account connection: ${JSON.stringify(data)}`);
+                    break;
+                  case CHEKIN_EVENTS.STAT_ACCOUNT_CONNECTION:
+                    log(`Stat account connection: ${JSON.stringify(data)}`);
                     break;
                   default:
                     log(`Event ${eventType}: ${JSON.stringify(data)}`, 'debug');
@@ -1074,7 +1099,7 @@
 
         const routes = ['/guests', '/reservations', '/settings', '/'];
         const randomRoute = routes[Math.floor(Math.random() * routes.length)];
-        sdk.navigateToRoute(randomRoute);
+        sdk.navigate(randomRoute);
         log(`Navigation requested to: ${randomRoute}`);
       };
 
@@ -1097,6 +1122,8 @@
           // Handle checkboxes
           const checkboxes = [
             'autoHeight',
+            'routeSync',
+            'enableLogging',
             'feature_iv',
             'feature_liveness',
             'hidden_housing_police',
@@ -1185,7 +1212,7 @@
             populateForm(config);
             updateSDKUrl();
             updateUrlPreview();
-            log('Combined SDK Sandbox loaded. Configuration restored from localStorage.');
+            log('Host SDK Sandbox loaded. Configuration restored from localStorage.');
           } catch (error) {
             log('Failed to load saved configuration, using defaults:', error.message);
             populateForm(defaultConfig);
@@ -1197,7 +1224,7 @@
           updateSDKSource();
           updateSDKUrl();
           updateUrlPreview();
-          log('Combined SDK Sandbox loaded with default configuration.');
+          log('Host SDK Sandbox loaded with default configuration.');
         }
 
         // Add event listeners
